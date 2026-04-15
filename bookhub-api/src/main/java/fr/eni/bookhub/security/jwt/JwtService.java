@@ -17,6 +17,10 @@ public class JwtService {
     @Value("${app.jwt.secret}")
     private String SECRET_KEY;
 
+    // expiration du token
+    @Value("${app.jwt.expiration}")
+    private long jwtExpiration;
+
     //Signature transmise pour la création du jeton.
     //Et chiffrer/déchiffrer les données du jeton
     private Key getSignInKey() {
@@ -43,7 +47,7 @@ public class JwtService {
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
     public String generateToken(UserDetails userDetails) {
