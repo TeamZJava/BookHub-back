@@ -6,6 +6,7 @@ import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,12 +32,29 @@ public class BookHubSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth-> {
             auth
-                //Permettre l'accès à l'URL login et register à tout le monde
+                    // Authentification ouverte à tous
                     .requestMatchers("/api/auth/**").permitAll()
+                    // on garde? et on garde bookhubcontroller?
                     .requestMatchers(("/api")).hasAnyRole("ADMIN")
 
+                    // Livres : lecture pour tout utilisateur authentifié
+                    .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
 
-                    //Toutes autres url et méthodes HTTP ne sont pas permises
+                    // Livres : création et modification et suppression réservées aux LIBRARIAN et ADMIN
+                    .requestMatchers(HttpMethod.POST, "/api/books").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
+
+
+                    // Commentaires et notes : tout utilisateur authentifié
+                    .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()
+
+                    // Favoris, emprunts, réservations : tout utilisateur authentifié
+                    .requestMatchers("/api/favorites/**").authenticated()
+                    .requestMatchers("/api/loans/**").authenticated()
+                    .requestMatchers("/api/reservations/**").authenticated()
+
+                    // Toute autre URL est refusée
                     .anyRequest().denyAll();
         });
 
