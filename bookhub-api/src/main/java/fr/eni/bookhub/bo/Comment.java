@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -39,8 +38,6 @@ public class Comment {
     // Commentaire signalé par un autre utilisateur
     @Column(nullable = false)
     private Boolean reported = false;
-    // comment on fait, on récup les commentaires signalés avec
-    // List<Comment> findByBadComment()?
 
     @Column(name = "comment_date", nullable = false)
     private LocalDateTime commentDate;
