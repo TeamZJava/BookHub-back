@@ -33,18 +33,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflict(ConflictException ex) {
-        return new ErrorResponse(404, List.of(ex.getMessage()));
+        return new ErrorResponse(409, List.of(ex.getMessage()));
     }
 
     @ExceptionHandler(ForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleGlobal(ForbiddenException ex) {
-        return new ErrorResponse(404, List.of(ex.getMessage()));
+        return new ErrorResponse(403, List.of(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGlobal(Exception ex) {
-        return new ErrorResponse(404, List.of(ex.getMessage()));
+        return new ErrorResponse(500, List.of(ex.getMessage()));
     }
 }
