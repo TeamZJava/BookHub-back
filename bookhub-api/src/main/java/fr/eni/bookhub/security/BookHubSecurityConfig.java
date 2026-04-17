@@ -6,10 +6,10 @@ import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,13 +42,34 @@ public class BookHubSecurityConfig {
                     ).permitAll()
                     .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
 
-                    //Toutes autres url et méthodes HTTP ne sont pas permises
+
+                    // Livres : lecture pour tout utilisateur authentifié
+                    .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
+
+                    // Livres : création et modification et suppression réservées aux LIBRARIAN et ADMIN
+                    .requestMatchers(HttpMethod.POST, "/api/books").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
+
+
+                    // Commentaires et notes : tout utilisateur authentifié
+                    .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()
+
+                    // Favoris, emprunts, réservations : tout utilisateur authentifié
+                    .requestMatchers("/api/favorites/**").authenticated()
+                    .requestMatchers("/api/loans/**").authenticated()
+                    .requestMatchers("/api/reservations/**").authenticated()
+
+                    // Toute autre URL est refusée
                     .anyRequest().denyAll();
         });
 
-        // désactivation CSRF pour faire des requêtes postman
-        http.csrf(AbstractHttpConfigurer::disable);
 
+        // Désactiver Cross Site Request Forgery
+        // Inutile pour les API REST en Stateless
+        http.csrf(csrf -> {
+            csrf.disable();
+        });
         //Connexion de l'utilisateur
         http.authenticationProvider(authenticationProvider);
         //Activer le filtre JWT et l'authentication de l'utilisateur
