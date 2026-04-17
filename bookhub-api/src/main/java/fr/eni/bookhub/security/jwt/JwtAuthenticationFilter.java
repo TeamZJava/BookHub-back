@@ -2,6 +2,7 @@ package fr.eni.bookhub.security.jwt;
 
 import java.io.IOException;
 
+import fr.eni.bookhub.bll.JwtService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

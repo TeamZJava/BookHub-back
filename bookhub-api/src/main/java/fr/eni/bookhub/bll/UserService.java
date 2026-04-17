@@ -1,0 +1,20 @@
+package fr.eni.bookhub.bll;
+
+import fr.eni.bookhub.bo.User;
+import fr.eni.bookhub.dto.*;
+
+import java.util.List;
+
+public interface UserService {
+    RegisterResponse add(RegisterRequest user);
+
+    UserUpdateResponse update(int id, UserUpdateRequest request);
+
+    void delete(int id);
+
+    UserResponse findById(int id);
+
+    List<UserResponse> findAll();
+
+    // méthodes pour update le rôle pour ADMIN
+}

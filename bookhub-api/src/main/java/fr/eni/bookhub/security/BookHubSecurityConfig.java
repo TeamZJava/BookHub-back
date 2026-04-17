@@ -32,10 +32,16 @@ public class BookHubSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth-> {
             auth
-                    // Authentification ouverte à tous
-                    .requestMatchers("/api/auth/**").permitAll()
-                    // on garde? et on garde bookhubcontroller?
-                    .requestMatchers(("/api")).hasAnyRole("ADMIN")
+                    //Permettre l'accès à l'URL login et register à tout le monde
+                    // + a la doc swagger
+                    .requestMatchers(
+                            "/api/auth/**",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/v3/api-docs"
+                    ).permitAll()
+                    .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
+
 
                     // Livres : lecture pour tout utilisateur authentifié
                     .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
