@@ -1,5 +1,6 @@
 package fr.eni.bookhub.bo;
 
+import fr.eni.bookhub.bo.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

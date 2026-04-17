@@ -2,8 +2,7 @@ package fr.eni.bookhub.controller;
 
 import fr.eni.bookhub.bll.AuthenticationService;
 import fr.eni.bookhub.bll.UserService;
-import fr.eni.bookhub.bo.User;
-import fr.eni.bookhub.dto.*;
+import fr.eni.bookhub.dto.authentification.*;
 import fr.eni.bookhub.security.jwt.AuthenticationRequest;
 import fr.eni.bookhub.security.jwt.AuthenticationResponse;
 import jakarta.validation.Valid;

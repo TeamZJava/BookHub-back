@@ -1,9 +1,9 @@
 package fr.eni.bookhub.bll;
 
-import fr.eni.bookhub.bo.Role;
+import fr.eni.bookhub.bo.enums.Role;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.UserRepository;
-import fr.eni.bookhub.dto.*;
+import fr.eni.bookhub.dto.authentification.*;
 import fr.eni.bookhub.errors.BadRequestException;
 import fr.eni.bookhub.errors.ConflictException;
 import fr.eni.bookhub.errors.NotFoundException;

@@ -1,4 +1,4 @@
-package fr.eni.bookhub.controller.dto;
+package fr.eni.bookhub.dto.catalogue;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

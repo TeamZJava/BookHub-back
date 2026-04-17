@@ -5,7 +5,7 @@ import fr.eni.bookhub.bll.CommentService;
 import fr.eni.bookhub.bll.RatingService;
 import fr.eni.bookhub.bo.Book;
 import fr.eni.bookhub.bo.User;
-import fr.eni.bookhub.controller.dto.BookDetailDTO;
+import fr.eni.bookhub.dto.catalogue.BookDetailDTO;
 import fr.eni.bookhub.dal.UserRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

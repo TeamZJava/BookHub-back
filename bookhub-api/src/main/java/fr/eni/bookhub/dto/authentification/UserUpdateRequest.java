@@ -1,4 +1,4 @@
-package fr.eni.bookhub.dto;
+package fr.eni.bookhub.dto.authentification;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

@@ -1,7 +1,7 @@
 package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.Book;
-import fr.eni.bookhub.controller.dto.BookDetailDTO;
+import fr.eni.bookhub.dto.catalogue.BookDetailDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,7 +1,10 @@
 package fr.eni.bookhub.mapper;
 
 import fr.eni.bookhub.bo.User;
-import fr.eni.bookhub.dto.*;
+import fr.eni.bookhub.dto.authentification.RegisterRequest;
+import fr.eni.bookhub.dto.authentification.RegisterResponse;
+import fr.eni.bookhub.dto.authentification.UserResponse;
+import fr.eni.bookhub.dto.authentification.UserUpdateResponse;
 import org.mapstruct.*;
 
 // componentModel = "spring" → MapStruct crée un bean Spring injectable partout

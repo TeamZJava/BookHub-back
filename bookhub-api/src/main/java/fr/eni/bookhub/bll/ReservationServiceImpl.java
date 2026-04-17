@@ -2,7 +2,7 @@ package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.Book;
 import fr.eni.bookhub.bo.Reservation;
-import fr.eni.bookhub.bo.ReservationStatus;
+import fr.eni.bookhub.bo.enums.ReservationStatus;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.BookRepository;
 import fr.eni.bookhub.dal.ReservationRepository;

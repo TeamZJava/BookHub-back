@@ -1,5 +1,6 @@
 package fr.eni.bookhub.bo;
 
+import fr.eni.bookhub.bo.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

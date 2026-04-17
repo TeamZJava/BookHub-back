@@ -1,7 +1,7 @@
 package fr.eni.bookhub.dal;
 
 import fr.eni.bookhub.bo.Loan;
-import fr.eni.bookhub.bo.LoanStatus;
+import fr.eni.bookhub.bo.enums.LoanStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

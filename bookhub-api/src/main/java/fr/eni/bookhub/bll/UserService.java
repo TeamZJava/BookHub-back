@@ -1,7 +1,6 @@
 package fr.eni.bookhub.bll;
 
-import fr.eni.bookhub.bo.User;
-import fr.eni.bookhub.dto.*;
+import fr.eni.bookhub.dto.authentification.*;
 
 import java.util.List;
 

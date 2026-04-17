@@ -1,8 +1,9 @@
 package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.*;
-import fr.eni.bookhub.controller.dto.BookDetailDTO;
-import fr.eni.bookhub.controller.dto.CommentDTO;
+import fr.eni.bookhub.bo.enums.LoanStatus;
+import fr.eni.bookhub.dto.catalogue.BookDetailDTO;
+import fr.eni.bookhub.dto.catalogue.CommentDTO;
 import fr.eni.bookhub.dal.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
