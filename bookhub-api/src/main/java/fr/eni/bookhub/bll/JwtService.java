@@ -1,4 +1,4 @@
-package fr.eni.bookhub.security.jwt;
+package fr.eni.bookhub.bll;
 
 import java.security.Key;
 import java.util.*;
@@ -32,6 +32,7 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
     }
+
     // Extraire 1 « claims » du jeton
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -45,9 +46,10 @@ public class JwtService {
 
     // Générer le jeton JWT
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+        return Jwts.builder().claims(extraClaims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
     public String generateToken(UserDetails userDetails) {
@@ -59,9 +61,11 @@ public class JwtService {
         final String username = extractUserName(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
+
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }

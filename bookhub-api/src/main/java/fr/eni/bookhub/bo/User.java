@@ -1,7 +1,6 @@
 package fr.eni.bookhub.bo;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,19 +13,18 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name="users")
 public class User implements UserDetails {
+
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")
-    private int id;
+    private Integer id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -51,20 +49,16 @@ public class User implements UserDetails {
     private LocalDateTime inscriptionDate;
 
     @Column(nullable = false)
-    private Boolean active;
+    private boolean active;
 
     @Column(name = "tos_acceptation_date")
     private LocalDateTime tosAcceptationDate;
 
-
-
-    //Correspond aux rôles de l'utilisateur
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
-    // Correspond au pseudo unique d'authentification
     @Override
     public String getUsername() {
         return email;

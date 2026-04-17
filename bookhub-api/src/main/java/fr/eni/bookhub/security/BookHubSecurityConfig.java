@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,21 +32,23 @@ public class BookHubSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth-> {
             auth
-                //Permettre l'accès à l'URL login et register à tout le monde
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers(("/api")).hasAnyRole("ADMIN")
-
+                    //Permettre l'accès à l'URL login et register à tout le monde
+                    // + a la doc swagger
+                    .requestMatchers(
+                            "/api/auth/**",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/v3/api-docs"
+                    ).permitAll()
+                    .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
 
                     //Toutes autres url et méthodes HTTP ne sont pas permises
                     .anyRequest().denyAll();
         });
 
+        // désactivation CSRF pour faire des requêtes postman
+        http.csrf(AbstractHttpConfigurer::disable);
 
-        // Désactiver Cross Site Request Forgery
-        // Inutile pour les API REST en Stateless
-        http.csrf(csrf -> {
-            csrf.disable();
-        });
         //Connexion de l'utilisateur
         http.authenticationProvider(authenticationProvider);
         //Activer le filtre JWT et l'authentication de l'utilisateur
