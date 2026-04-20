@@ -2,7 +2,7 @@ package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.Book;
 import fr.eni.bookhub.bo.Loan;
-import fr.eni.bookhub.bo.enums.LoanStatus;
+import fr.eni.bookhub.bo.LoanStatus;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.BookRepository;
 import fr.eni.bookhub.dal.LoanRepository;
@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -49,6 +50,17 @@ public class LoanServiceImpl implements LoanService {
         } catch (Exception e) {
             throw new RuntimeException("Impossible de créer l'emprunt !");
         }
+    }
+
+    @Override
+    public boolean isLate(int userId) {
+        List<Loan> emprunts = loanRepository.findByUserId(userId);
+        for (Loan emprunt : emprunts) {
+            if (emprunt.getStatus() == LoanStatus.ACTIVE && emprunt.getDueDate().isBefore(LocalDateTime.now())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Book validerLivre(int bookId) {
