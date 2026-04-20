@@ -32,7 +32,7 @@ gradle bootRun
 ```
 
 - API par défaut : **http://localhost:8080**
-- Si Swagger est activé dans le projet : voir `API-ENDPOINTS.md` à la racine pour les chemins exacts (ex. `/swagger-ui.html` ou équivalent selon version).
+- Si Swagger est activé dans le projet : http://localhost:8080/swagger-ui/index.html
 
 ---
 
@@ -78,4 +78,4 @@ ng serve
 
 ## 4. Données de test
 
-- Scripts / jeux de données : voir `BookHub-back-main/Reset et recreate Jeu_de_Données.md` et la doc équipe pour utilisateurs de test (mot de passe, rôles).
+- Scripts / jeux de données : voir `BookHub-back-main/Reset_et_recreate Jeu_de_Données.md`
