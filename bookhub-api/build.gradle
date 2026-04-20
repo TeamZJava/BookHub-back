@@ -36,15 +36,18 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // MapStruct
+    // MapStruct pour les DTO
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
-    //intégration JWT
+    // intégration JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
+    // utilisation base h2 pour les tests
+    testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {

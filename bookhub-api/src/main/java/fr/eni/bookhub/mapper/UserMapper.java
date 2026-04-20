@@ -7,25 +7,23 @@ import fr.eni.bookhub.dto.authentification.UserResponse;
 import fr.eni.bookhub.dto.authentification.UserUpdateResponse;
 import org.mapstruct.*;
 
-// componentModel = "spring" → MapStruct crée un bean Spring injectable partout
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    // RegisterRequest → User
-    // On ignore les champs qu'on gère manuellement dans la BLL
+    // RegisterRequest -> User
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", ignore = true)        // forcé à USER dans la BLL
     @Mapping(target = "active", ignore = true)      // forcé à true dans la BLL
-    @Mapping(target = "inscriptionDate", ignore = true) // LocalDateTime.now() dans la BLL
-    @Mapping(target = "password", ignore = true)    // BCrypt dans la BLL
+    @Mapping(target = "inscriptionDate", ignore = true) // now() dans la BLL
+    @Mapping(target = "password", ignore = true)    // Hashé avec bcrypt dans la BLL
     User toEntity(RegisterRequest request);
 
-    // User → RegisterResponse
+    // User -> RegisterResponse
     // role est un enum, on le convertit en String avec .name()
     @Mapping(target = "role", expression = "java(user.getRole().name())")
     RegisterResponse toRegisterResponse(User user);
 
-    // User → UserResponse (pour les GET)
+    // User -> UserResponse (pour les GET /users/**)
     @Mapping(target = "role", expression = "java(user.getRole().name())")
     UserResponse toUserResponse(User user);
 

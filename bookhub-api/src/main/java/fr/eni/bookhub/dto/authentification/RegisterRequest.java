@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RegisterRequest {
 
     @NotBlank(message = "Email obligatoire")
     @Email(message = "Format email invalide")
     private String email;
 
-    // La validation du pattern reste ici, pas sur l'entité
     @NotBlank(message = "Mot de passe obligatoire")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{12,}$",

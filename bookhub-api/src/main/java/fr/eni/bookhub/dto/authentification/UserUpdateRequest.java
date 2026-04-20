@@ -6,6 +6,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserUpdateRequest {
 
     @NotBlank(message = "Email obligatoire")

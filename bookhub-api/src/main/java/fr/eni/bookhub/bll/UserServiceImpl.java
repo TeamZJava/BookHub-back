@@ -109,11 +109,11 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("L'id doit être supérieur à zéro");
         }
 
-        try {
-            userRepository.deleteById(id);
-        } catch (RuntimeException e) {
-            throw new BadRequestException("Impossible de supprimer l'utilisateur avec l'id : " + id + " -- " + e.getMessage());
+        if (!userRepository.existsById(id)) {
+            throw new BadRequestException("Utilisateur introuvable avec l'id : " + id);
         }
+
+        userRepository.deleteById(id);
     }
 
     @Override
