@@ -43,9 +43,6 @@ public class BookController {
         Sort.Direction dir = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort));
         Page<Book> livres = bookService.search(search, category, available, pageable);
-        if (livres == null || livres.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(livres);
     }
 
@@ -66,8 +63,8 @@ public class BookController {
     @GetMapping("/categories")
     public ResponseEntity<?> getCategories() {
         List<String> categories = bookService.getCategories();
-        if (categories == null || categories.isEmpty()) {
-            return ResponseEntity.noContent().build();
+        if (categories == null) {
+            categories = List.of();
         }
         return ResponseEntity.ok(categories);
     }

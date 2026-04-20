@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -49,6 +50,17 @@ public class LoanServiceImpl implements LoanService {
         } catch (Exception e) {
             throw new RuntimeException("Impossible de créer l'emprunt !");
         }
+    }
+
+    @Override
+    public boolean isLate(int userId) {
+        List<Loan> emprunts = loanRepository.findByUserId(userId);
+        for (Loan emprunt : emprunts) {
+            if (emprunt.getStatus() == LoanStatus.ACTIVE && emprunt.getDueDate().isBefore(LocalDateTime.now())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Book validerLivre(int bookId) {

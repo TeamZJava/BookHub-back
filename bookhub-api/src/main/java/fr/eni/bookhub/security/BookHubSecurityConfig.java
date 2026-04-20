@@ -13,6 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 @Configuration
@@ -25,11 +30,25 @@ public class BookHubSecurityConfig {
     @Autowired
     private AuthenticationProvider authenticationProvider;
 
-
+    //Le front et l’API ne sont pas sur le même port ; le navigateur bloque les appels entre
+    // origines différentes ; on configure le back pour autoriser l’origine du front (CORS),
+    // sinon la connexion depuis Angular ne peut pas fonctionner.
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
     // Restriction des URLs selon la connexion utilisateur et leurs rôles
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.authorizeHttpRequests(auth-> {
             auth
                     //Permettre l'accès à l'URL login et register à tout le monde
@@ -41,7 +60,6 @@ public class BookHubSecurityConfig {
                             "/v3/api-docs"
                     ).permitAll()
                     .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
-
 
                     // Livres : lecture pour tout utilisateur authentifié
                     .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
