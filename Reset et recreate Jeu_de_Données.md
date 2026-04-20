@@ -116,7 +116,7 @@ BEGIN TRY
     VALUES
         ('user@bookhub.fr',
          '$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
-         'Alice', 'Dupont', '0600000001', 'USER', GETDATE(), 1, GETDATE()),
+         'Marie', 'Dupont', '0600000001', 'USER', GETDATE(), 1, GETDATE()),
 
         ('librarian@bookhub.fr',
          '$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
