@@ -2,7 +2,7 @@ package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.Book;
 import fr.eni.bookhub.bo.Loan;
-import fr.eni.bookhub.bo.LoanStatus;
+import fr.eni.bookhub.bo.enums.LoanStatus;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.BookRepository;
 import fr.eni.bookhub.dal.LoanRepository;
