@@ -38,6 +38,6 @@ public class Reservation {
     private int rankInLine;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
     private ReservationStatus status;
 }
