@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import fr.eni.bookhub.dto.MessageResponse;
 
 import java.security.Principal;
 import java.util.List;
@@ -20,7 +21,7 @@ public class FavoriteController {
     private FavoriteService favoriteService;
     private UserRepository userRepository;
 
-    @GetMapping
+   @GetMapping
     public ResponseEntity<?> getFavorites(Principal principal) {
         try {
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
@@ -30,7 +31,7 @@ public class FavoriteController {
             }
             return ResponseEntity.ok(favoris);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -40,11 +41,11 @@ public class FavoriteController {
             int bookId = Integer.parseInt(bookIdInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             favoriteService.addFavorite(user.getId(), bookId);
-            return ResponseEntity.ok("Favori ajouté");
+            return ResponseEntity.ok(new MessageResponse("Favori ajouté"));
         } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre identifiant n'est pas un entier");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse("Votre identifiant n'est pas un entier"));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -54,11 +55,11 @@ public class FavoriteController {
             int bookId = Integer.parseInt(bookIdInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             favoriteService.removeFavorite(user.getId(), bookId);
-            return ResponseEntity.ok("Favori supprimé");
+            return ResponseEntity.ok(new MessageResponse("Favori supprimé"));
         } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre identifiant n'est pas un entier");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse("Votre identifiant n'est pas un entier"));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -69,9 +70,9 @@ public class FavoriteController {
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             return ResponseEntity.ok(favoriteService.isFavorite(user.getId(), bookId));
         } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre identifiant n'est pas un entier");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse("Votre identifiant n'est pas un entier"));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new MessageResponse(e.getMessage()));
         }
     }
 }
