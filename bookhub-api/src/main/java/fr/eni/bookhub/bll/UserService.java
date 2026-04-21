@@ -15,5 +15,7 @@ public interface UserService {
 
     List<UserResponse> findAll();
 
+    UserResponse getUserProfile(String email);
+
     // méthodes pour update le rôle pour ADMIN
 }

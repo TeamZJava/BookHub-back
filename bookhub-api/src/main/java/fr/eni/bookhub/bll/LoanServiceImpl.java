@@ -7,10 +7,13 @@ import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.BookRepository;
 import fr.eni.bookhub.dal.LoanRepository;
 import fr.eni.bookhub.dal.UserRepository;
+import fr.eni.bookhub.errors.BadRequestException;
+import fr.eni.bookhub.errors.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,33 @@ public class LoanServiceImpl implements LoanService {
     private LoanRepository loanRepository;
     private BookRepository bookRepository;
     private UserRepository userRepository;
+
+    @Override
+    public List<Loan> getUserLoans(String email) {
+
+        // Récupération + vérif user en base
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException("L'utilisateur n'existe pas")
+        );
+
+        // On remplit le tableau avec tout les emprunts liés à l'utilisateur
+        List<Loan> loans = loanRepository.findByUserId(user.getId());
+
+        // Filtre sur le status : on récupère seulement les emprunts actifs ou en retard
+        loans.stream()
+                .filter(
+                        loan -> loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE
+                )
+                .toList();
+
+        return loans;
+    }
+
+    @Override
+    public List<Loan> getAllLoans() {
+        return List.of();
+    }
+
 
     @Override
     public void borrow(int userId, int bookId) {
