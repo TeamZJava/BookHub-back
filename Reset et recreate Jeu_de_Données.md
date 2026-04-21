@@ -1,4 +1,4 @@
-# BookHub — Reset schéma + données de test (SQL Server / SSMS)
+# BookHub — Reset schéma + données de test (SQL Server)
 
 Comptes de test
 
@@ -112,18 +112,19 @@ BEGIN TRY
     -- Réinsérer les données de test
 
     -- Utilisateurs de test (mot de passe : User1234)
+    -- IMPORTANT : le back utilise DelegatingPasswordEncoder => préfixe {bcrypt} obligatoire
     INSERT INTO dbo.users (email, password, first_name, last_name, phone, role, inscription_date, active, tos_acceptation_date)
     VALUES
         ('user@bookhub.fr',
-         '$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
+         '{bcrypt}$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
          'Marie', 'Dupont', '0600000001', 'USER', GETDATE(), 1, GETDATE()),
 
         ('librarian@bookhub.fr',
-         '$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
+         '{bcrypt}$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
          'Ahmed', 'Demha', '0600000002', 'LIBRARIAN', GETDATE(), 1, GETDATE()),
 
         ('admin@bookhub.fr',
-         '$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
+         '{bcrypt}$2b$12$EEsHH8vDWXbL0xojxN.ViOHc2LbhmQATmc3JvcMIN/5K0rPUs7BQK',
          'Sophie', 'Doe', '0600000003', 'ADMIN', GETDATE(), 1, GETDATE());
 
 
