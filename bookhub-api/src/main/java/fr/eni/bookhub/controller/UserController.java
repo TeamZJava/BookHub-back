@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @AllArgsConstructor
@@ -53,6 +54,13 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseEntity<UserResponse> getById(@PathVariable int id) {
         return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @GetMapping("/users/my")
+    public ResponseEntity<UserResponse> getMyProfil(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(userService.getUserProfile(principal.getName()));
     }
 
     @GetMapping("/users")

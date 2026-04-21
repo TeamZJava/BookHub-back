@@ -1,5 +1,6 @@
 package fr.eni.bookhub.controller;
 
+import fr.eni.bookhub.bo.Loan;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.bll.LoanService;
 import fr.eni.bookhub.dal.UserRepository;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -40,5 +42,12 @@ public class LoanController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<Loan>> getMyLoans(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(loanService.getUserLoans(principal.getName()));
     }
 }

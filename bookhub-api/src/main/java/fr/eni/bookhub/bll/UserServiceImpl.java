@@ -136,4 +136,12 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public UserResponse getUserProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Aucun utilisateur trouvé avec cet email"));
+
+        return userMapper.toUserResponse(user);
+    }
+
 }
