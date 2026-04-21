@@ -16,6 +16,7 @@ public interface UserMapper {
     @Mapping(target = "active", ignore = true)      // forcé à true dans la BLL
     @Mapping(target = "inscriptionDate", ignore = true) // now() dans la BLL
     @Mapping(target = "password", ignore = true)    // Hashé avec bcrypt dans la BLL
+    @Mapping(target = "authorities", ignore = true) // pour ignorer le warning MapStruct
     User toEntity(RegisterRequest request);
 
     // User -> RegisterResponse
