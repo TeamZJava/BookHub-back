@@ -75,9 +75,6 @@ public class UserServiceImpl implements UserService {
             throw new ConflictException("Cet email est déjà utilisé");
         }
 
-        // Mise de côté de l'ancien email
-        String oldEmail = userEnBase.getEmail();
-
         // Mise à jour uniquement des champs autorisés
         userEnBase.setEmail(request.getEmail());
         userEnBase.setFirstName(request.getFirstName());
@@ -104,16 +101,11 @@ public class UserServiceImpl implements UserService {
         // Sauvegarde
         User savedUser = userRepository.save(userEnBase);
 
-        // Booléen true si l'email a changé, false sinon
-        boolean emailChanged = !oldEmail.equals(savedUser.getEmail());
-
         // Conversion vers le DTO
         UserUpdateResponse response = userMapper.toUpdateResponse(savedUser);
 
-        // JWT si email différent d'avant
-        if (emailChanged) {
-            response.setToken(jwtService.generateToken(savedUser));
-        }
+        // Nouveau token
+        response.setToken(jwtService.generateToken(savedUser));
 
         return response;
     }
