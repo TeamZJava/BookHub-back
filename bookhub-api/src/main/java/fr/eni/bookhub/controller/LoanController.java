@@ -38,12 +38,12 @@ public class LoanController {
     }
 
     @GetMapping("/is-late")
-    public ResponseEntity<?> hasOverdue(Principal principal) {
+    public ResponseEntity<Boolean> hasOverdue(Principal principal) {
         try {
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             return ResponseEntity.ok(loanService.isLate(user.getId()));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.ok(false);
         }
     }
 
