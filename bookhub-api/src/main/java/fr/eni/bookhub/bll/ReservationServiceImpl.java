@@ -7,70 +7,105 @@ import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.BookRepository;
 import fr.eni.bookhub.dal.ReservationRepository;
 import fr.eni.bookhub.dal.UserRepository;
+import fr.eni.bookhub.dto.reservation.ReservationDTO;
+import fr.eni.bookhub.errors.BadRequestException;
+import fr.eni.bookhub.errors.NotFoundException;
+import fr.eni.bookhub.mapper.UserMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
+    private final UserMapper userMapper;
     private ReservationRepository reservationRepository;
     private BookRepository bookRepository;
     private UserRepository userRepository;
 
     @Override
+    public List<ReservationDTO> getUserReservations(String email) {
+        // Récupération user
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException("Utilisateur non trouvé")
+        );
+
+        // Remplissage d'un tableau avec toute les résas de l'utilisateur
+        List<Reservation> reservations = reservationRepository.findByUserId(user.getId());
+
+        return reservations.stream()
+                .map(userMapper::toReservationDTO)
+                .toList();
+    }
+
+    @Transactional
+    @Override
     public void reserve(int userId, int bookId) {
-        final Book book = validerLivre(bookId);
-        final User utilisateur = validerUtilisateur(userId);
 
-        // Calculer le rang dans la file d'attente
-        final List<Reservation> reservationsExistantes = reservationRepository.findByBookId(bookId);
-        int rang = 0;
-        for (Reservation r : reservationsExistantes) {
-            if (r.getStatus() == ReservationStatus.PENDING) {
-                rang++;
-            }
-        }
-        rang = rang + 1;
+        // Récupération du livre
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException("Livre introuvable"));
 
-        // Créer la réservation
-        final Reservation reservation = new Reservation();
-        reservation.setUser(utilisateur);
-        reservation.setBook(book);
-        reservation.setReservationDate(LocalDateTime.now());
-        reservation.setRankInLine(rang);
-        reservation.setStatus(ReservationStatus.PENDING);
+        // Récupération de l'utilisateur
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Utilisateur introuvable"));
 
-        try {
-            reservationRepository.save(reservation);
-        } catch (Exception e) {
-            throw new RuntimeException("Impossible de créer la réservation !");
-        }
+        // Calcul du rang (dernier de la liste)
+        int rang = reservationRepository.countByBookIdAndStatus(bookId, ReservationStatus.PENDING) + 1;
+
+        Reservation reservation = Reservation.builder()
+                .user(user)
+                .book(book)
+                .reservationDate(LocalDateTime.now())
+                .rankInLine(rang)
+                .status(ReservationStatus.PENDING)
+                .build();
+
+        reservationRepository.save(reservation);
     }
 
-    private Book validerLivre(int bookId) {
-        if (bookId <= 0) {
-            throw new RuntimeException("Identifiant n'existe pas");
+    @Transactional
+    @Override
+    public void cancel(int reservationId) {
+        if (reservationId <= 0) {
+            throw new BadRequestException("ID invalide");
         }
-        final Optional<Book> opt = bookRepository.findById(bookId);
-        if (opt.isPresent()) {
-            return opt.get();
-        }
-        throw new RuntimeException("Aucun livre ne correspond à l'identifiant " + bookId);
+
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
+                () -> new NotFoundException("Reservation introuvable")
+        );
+
+        // Passage en CANCELED, pas de suppression de la resa
+        reservation.setStatus(ReservationStatus.CANCELED);
+
+        reservationRepository.save(reservation);
+
+        // Ajuste les numéros dans la file
+        reorderReservations(reservation.getBook().getId());
     }
 
-    private User validerUtilisateur(int userId) {
-        if (userId <= 0) {
-            throw new RuntimeException("Identifiant n'existe pas");
+
+    @Transactional
+    protected void reorderReservations(int bookId) {
+
+        // Récupération des réservations liées au livre
+        List<Reservation> reservations = reservationRepository
+                .findByBookIdAndStatusOrderByReservationDateAsc(bookId, ReservationStatus.PENDING);
+
+        int rank = 1;
+
+        // Recalcul du rang sur chaque réservation
+        for (Reservation reservation : reservations) {
+            reservation.setRankInLine(rank);
+            rank++;
         }
-        final Optional<User> opt = userRepository.findById(userId);
-        if (opt.isPresent()) {
-            return opt.get();
-        }
-        throw new RuntimeException("Aucun utilisateur ne correspond à l'identifiant " + userId);
+
+        // Sauvegarde de toute les réservations
+        reservationRepository.saveAll(reservations);
     }
+
 }

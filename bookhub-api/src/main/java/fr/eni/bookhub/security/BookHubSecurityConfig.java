@@ -79,10 +79,14 @@ public class BookHubSecurityConfig {
                     .requestMatchers("/api/favorites/**").authenticated()
 
                     // Emprunts
-                    .requestMatchers("/api/loans").hasAnyRole("LIBRARIAN", "ADMIN")
-                    .requestMatchers("/api/loans/**").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/api/loans/*/return").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/api/loans").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/loans").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/api/loans/my").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/api/loans").authenticated()
 
-                    .requestMatchers("/api/reservations/**").authenticated()
+                    // Reservations
+                    .requestMatchers("/api/reservations", "/api/reservations/*").authenticated()
 
                     // Toute autre URL est refusée
                     .anyRequest().denyAll();

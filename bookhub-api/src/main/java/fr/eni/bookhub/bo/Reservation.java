@@ -3,6 +3,7 @@ package fr.eni.bookhub.bo;
 import fr.eni.bookhub.bo.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "reservations")
 public class Reservation {

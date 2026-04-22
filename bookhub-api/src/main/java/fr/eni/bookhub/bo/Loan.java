@@ -2,16 +2,14 @@ package fr.eni.bookhub.bo;
 
 import fr.eni.bookhub.bo.enums.LoanStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "loans")
 public class Loan {

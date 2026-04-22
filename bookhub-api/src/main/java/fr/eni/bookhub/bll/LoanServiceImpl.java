@@ -13,6 +13,7 @@ import fr.eni.bookhub.errors.NotFoundException;
 import fr.eni.bookhub.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class LoanServiceImpl implements LoanService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public void finishLoan(int loanId) {
         if(loanId <= 0) {
@@ -97,34 +99,35 @@ public class LoanServiceImpl implements LoanService {
     }
 
 
+    @Transactional
     @Override
     public void borrow(int userId, int bookId) {
-        final Book book = validerLivre(bookId);
+        final Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException("Livre introuvable"));
 
         // Vérifier la dispo
         if (book.getAvailableCopies() <= 0) {
-            throw new RuntimeException("Aucun exemplaire disponible pour ce livre");
+            throw new BadRequestException("Aucun exemplaire disponible pour ce livre");
         }
 
-        final User utilisateur = validerUtilisateur(userId);
+        final User utilisateur = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Utilisateur introuvable"));
 
         // Créer l'emprunt
-        final Loan emprunt = new Loan();
-        emprunt.setUser(utilisateur);
-        emprunt.setBook(book);
-        emprunt.setLoanDate(LocalDateTime.now());
-        emprunt.setDueDate(LocalDateTime.now().plusDays(14));
-        emprunt.setStatus(LoanStatus.ACTIVE);
+        final Loan emprunt = Loan.builder()
+                .user(utilisateur)
+                .book(book)
+                .loanDate(LocalDateTime.now())
+                .dueDate(LocalDateTime.now().plusDays(14))
+                .status(LoanStatus.ACTIVE)
+                .build();
 
         // Décrémenter les exemplaires disponibles
         book.setAvailableCopies(book.getAvailableCopies() - 1);
 
-        try {
-            bookRepository.save(book);
-            loanRepository.save(emprunt);
-        } catch (Exception e) {
-            throw new RuntimeException("Impossible de créer l'emprunt !");
-        }
+
+        bookRepository.save(book);
+        loanRepository.save(emprunt);
     }
 
     @Override
@@ -136,27 +139,5 @@ public class LoanServiceImpl implements LoanService {
             }
         }
         return false;
-    }
-
-    private Book validerLivre(int bookId) {
-        if (bookId <= 0) {
-            throw new RuntimeException("Identifiant n'existe pas");
-        }
-        final Optional<Book> opt = bookRepository.findById(bookId);
-        if (opt.isPresent()) {
-            return opt.get();
-        }
-        throw new RuntimeException("Aucun livre ne correspond à l'identifiant " + bookId);
-    }
-
-    private User validerUtilisateur(int userId) {
-        if (userId <= 0) {
-            throw new RuntimeException("Identifiant n'existe pas !");
-        }
-        final Optional<User> opt = userRepository.findById(userId);
-        if (opt.isPresent()) {
-            return opt.get();
-        }
-        throw new RuntimeException("Aucun utilisateur ne correspond à l'identifiant " + userId);
     }
 }

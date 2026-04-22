@@ -32,4 +32,21 @@ public class ReservationController {
         }
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyReservations(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(reservationService.getUserReservations(principal.getName()));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> cancelReservation(
+            @PathVariable("id") int reservationId
+    ) {
+        reservationService.cancel(reservationId);
+
+        // 204 No content si ok
+        return ResponseEntity.noContent().build();
+    }
 }
