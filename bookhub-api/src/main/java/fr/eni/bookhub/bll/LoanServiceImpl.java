@@ -113,6 +113,30 @@ public class LoanServiceImpl implements LoanService {
         final User utilisateur = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Utilisateur introuvable"));
 
+        List<Loan> loans = loanRepository.findByUserId(userId);
+
+        // Vérification nombre d'emprunts en cours
+        long nbEmprunts = loans.stream()
+                .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE
+                        || loan.getStatus() == LoanStatus.OVERDUE)
+                .count();
+
+        if (nbEmprunts >= 3) {
+            throw new BadRequestException("Nombre maximum d'emprunts atteint");
+        }
+
+        // Vérification si l'utilisateur a déjà un emprunt en cours sur CE livre
+        boolean dejaEmprunte = loans.stream()
+                .anyMatch(loan ->
+                        loan.getBook().getId() == bookId &&
+                                (loan.getStatus() == LoanStatus.ACTIVE
+                                        || loan.getStatus() == LoanStatus.OVERDUE)
+                );
+
+        if (dejaEmprunte) {
+            throw new BadRequestException("Vous avez déjà emprunté ce livre");
+        }
+
         // Créer l'emprunt
         final Loan emprunt = Loan.builder()
                 .user(utilisateur)
