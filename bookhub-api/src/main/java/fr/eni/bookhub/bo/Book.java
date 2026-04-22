@@ -1,6 +1,7 @@
 package fr.eni.bookhub.bo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,9 +44,13 @@ public class Book {
     @Column(name = "cover_url", length = 500)
     private String coverUrl;
 
+     // Au moins 1 exemplaire obligé
+    @Min(1)
     @Column(name = "total_copies", nullable = false)
     private int totalCopies;
 
+    // Pas d'exemplaires négatifs
+    @Min(0)
     @Column(name = "available_copies", nullable = false)
     private int availableCopies;
 
