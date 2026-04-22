@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class BookServiceCreateTest {
+public class BookServiceCreateBookTest {
 
     @Autowired
     private BookServiceImpl bookService;
