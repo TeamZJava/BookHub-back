@@ -1,16 +1,17 @@
 package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.Loan;
+import fr.eni.bookhub.dto.emprunts.LoanDTO;
 
 import java.util.List;
 
 public interface LoanService {
-    List<Loan> getUserLoans(String email);
+    List<LoanDTO> getUserLoans(String email);
 
     // TODO : Retour d'un livre
 //    void finishLoan();
 
-    List<Loan> getAllLoans();
+    List<LoanDTO> getAllLoans();
 
     void borrow(int userId, int bookId);
 

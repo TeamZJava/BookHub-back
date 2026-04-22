@@ -61,6 +61,8 @@ public class BookHubSecurityConfig {
                     ).permitAll()
                     .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
 
+                    // Users : update
+                    .requestMatchers(HttpMethod.PUT, "/api/users").authenticated()
                     // Livres : lecture pour tout utilisateur authentifié
                     .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
 
@@ -75,7 +77,11 @@ public class BookHubSecurityConfig {
 
                     // Favoris, emprunts, réservations : tout utilisateur authentifié
                     .requestMatchers("/api/favorites/**").authenticated()
+
+                    // Emprunts
+                    .requestMatchers("/api/loans").hasAnyRole("LIBRARIAN", "ADMIN")
                     .requestMatchers("/api/loans/**").authenticated()
+
                     .requestMatchers("/api/reservations/**").authenticated()
 
                     // Toute autre URL est refusée

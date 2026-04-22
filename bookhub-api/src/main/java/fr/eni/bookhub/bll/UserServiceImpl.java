@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final JwtService jwtService;
 
     @Transactional
     @Override
@@ -74,6 +75,9 @@ public class UserServiceImpl implements UserService {
             throw new ConflictException("Cet email est déjà utilisé");
         }
 
+        // Mise de côté de l'ancien email
+        String oldEmail = userEnBase.getEmail();
+
         // Mise à jour uniquement des champs autorisés
         userEnBase.setEmail(request.getEmail());
         userEnBase.setFirstName(request.getFirstName());
@@ -97,10 +101,21 @@ public class UserServiceImpl implements UserService {
             userEnBase.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
+        // Sauvegarde
+        User savedUser = userRepository.save(userEnBase);
 
-        userRepository.save(userEnBase);
+        // Booléen true si l'email a changé, false sinon
+        boolean emailChanged = !oldEmail.equals(savedUser.getEmail());
 
-        return userMapper.toUpdateResponse(userEnBase);
+        // Conversion vers le DTO
+        UserUpdateResponse response = userMapper.toUpdateResponse(savedUser);
+
+        // JWT si email différent d'avant
+        if (emailChanged) {
+            response.setToken(jwtService.generateToken(savedUser));
+        }
+
+        return response;
     }
 
     @Override

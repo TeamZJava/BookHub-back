@@ -1,10 +1,12 @@
 package fr.eni.bookhub.mapper;
 
+import fr.eni.bookhub.bo.Loan;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dto.authentification.RegisterRequest;
 import fr.eni.bookhub.dto.authentification.RegisterResponse;
 import fr.eni.bookhub.dto.authentification.UserResponse;
 import fr.eni.bookhub.dto.authentification.UserUpdateResponse;
+import fr.eni.bookhub.dto.emprunts.LoanDTO;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
@@ -30,4 +32,6 @@ public interface UserMapper {
 
     @Mapping(target = "role", expression = "java(user.getRole().name())")
     UserUpdateResponse toUpdateResponse(User user);
+
+    LoanDTO toLoanDto(Loan loan);
 }

@@ -7,8 +7,10 @@ import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.dal.BookRepository;
 import fr.eni.bookhub.dal.LoanRepository;
 import fr.eni.bookhub.dal.UserRepository;
+import fr.eni.bookhub.dto.emprunts.LoanDTO;
 import fr.eni.bookhub.errors.BadRequestException;
 import fr.eni.bookhub.errors.NotFoundException;
+import fr.eni.bookhub.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +26,10 @@ public class LoanServiceImpl implements LoanService {
     private LoanRepository loanRepository;
     private BookRepository bookRepository;
     private UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
-    public List<Loan> getUserLoans(String email) {
+    public List<LoanDTO> getUserLoans(String email) {
 
         // Récupération + vérif user en base
         User user = userRepository.findByEmail(email).orElseThrow(
@@ -43,12 +46,26 @@ public class LoanServiceImpl implements LoanService {
                 )
                 .toList();
 
-        return loans;
+        return loans.stream()
+                .map(userMapper::toLoanDto)
+                .toList();
     }
 
     @Override
-    public List<Loan> getAllLoans() {
-        return List.of();
+    public List<LoanDTO> getAllLoans() {
+        // On remplit le tableau avec tout les emprunts
+        List<Loan> loans = loanRepository.findAll();
+
+        // Filtre sur le status : on récupère seulement les emprunts actifs ou en retard
+        loans.stream()
+                .filter(
+                        loan -> loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE
+                )
+                .toList();
+
+        return loans.stream()
+                .map(userMapper::toLoanDto)
+                .toList();
     }
 
 

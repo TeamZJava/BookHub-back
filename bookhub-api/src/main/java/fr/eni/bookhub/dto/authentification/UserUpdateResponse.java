@@ -11,4 +11,5 @@ public class UserUpdateResponse {
     private String lastName;
     private String phone;
     private String role;
+    private String token;
 }

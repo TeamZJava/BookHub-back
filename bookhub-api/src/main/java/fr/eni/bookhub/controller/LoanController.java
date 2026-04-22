@@ -4,9 +4,12 @@ import fr.eni.bookhub.bo.Loan;
 import fr.eni.bookhub.bo.User;
 import fr.eni.bookhub.bll.LoanService;
 import fr.eni.bookhub.dal.UserRepository;
+import fr.eni.bookhub.dto.emprunts.LoanDTO;
+import fr.eni.bookhub.errors.ForbiddenException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -19,6 +22,20 @@ public class LoanController {
 
     private LoanService loanService;
     private UserRepository userRepository;
+
+    @GetMapping
+    public ResponseEntity<?> findAll(
+            Authentication authentication
+    ) {
+        if(authentication.getAuthorities()
+                .stream()
+                .noneMatch(
+                a -> a.getAuthority().equals("ROLE_ADMIN")
+                        || a.getAuthority().equals("ROLE_LIBRARIAN"))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ForbiddenException("Vous n'avez pas les droits pour accéder à cette page"));
+        }
+        return ResponseEntity.ok(loanService.getAllLoans());
+    }
 
     @GetMapping("/is-late")
     public ResponseEntity<?> hasOverdue(Principal principal) {
@@ -45,7 +62,7 @@ public class LoanController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<Loan>> getMyLoans(
+    public ResponseEntity<List<LoanDTO>> getMyLoans(
             Principal principal
     ) {
         return ResponseEntity.ok(loanService.getUserLoans(principal.getName()));
