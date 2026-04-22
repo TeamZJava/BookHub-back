@@ -1,5 +1,6 @@
 package fr.eni.bookhub.bll;
 
+import fr.eni.bookhub.bo.enums.Role;
 import fr.eni.bookhub.dto.authentification.*;
 
 import java.util.List;
@@ -17,5 +18,5 @@ public interface UserService {
 
     UserResponse getUserProfile(String email);
 
-    // méthodes pour update le rôle pour ADMIN
+    UserResponse setRole(int userId, Role role);
 }

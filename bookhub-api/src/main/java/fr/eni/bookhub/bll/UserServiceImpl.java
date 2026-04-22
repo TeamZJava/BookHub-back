@@ -159,4 +159,21 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Override
+    public UserResponse setRole(int userId, Role role) {
+        if (userId <= 0) {
+            throw new BadRequestException("ID invalide");
+        }
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("Utilisateur non trouvé")
+        );
+
+        user.setRole(role);
+
+        userRepository.save(user);
+
+        return userMapper.toUserResponse(user);
+    }
+
 }

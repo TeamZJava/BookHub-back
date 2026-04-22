@@ -2,14 +2,16 @@ package fr.eni.bookhub.controller;
 
 import fr.eni.bookhub.bll.AuthenticationService;
 import fr.eni.bookhub.bll.UserService;
-import fr.eni.bookhub.bo.User;
+import fr.eni.bookhub.bo.enums.Role;
 import fr.eni.bookhub.dto.authentification.*;
+import fr.eni.bookhub.errors.ForbiddenException;
 import fr.eni.bookhub.security.jwt.AuthenticationRequest;
 import fr.eni.bookhub.security.jwt.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -71,5 +73,20 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll());
     }
 
+    @PutMapping("/users/{id}/role")
+    public ResponseEntity<?> modifyRole(
+            @PathVariable int id,
+            @RequestParam("role") String role,
+            Authentication authentication
+    ) {
+        if(authentication.getAuthorities()
+                .stream()
+                .noneMatch(
+                        a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new ForbiddenException("Vous n'avez pas les droits pour faire cette requête");
+        }
+
+        return ResponseEntity.ok(userService.setRole(id, Role.valueOf(role)));
+    }
 
 }

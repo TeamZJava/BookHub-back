@@ -59,10 +59,12 @@ public class BookHubSecurityConfig {
                             "/v3/api-docs/**",
                             "/v3/api-docs"
                     ).permitAll()
-                    .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
 
-                    // Users : update
+                    // Users
+                    .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/users").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/users/{id}/role").hasAnyRole("ADMIN")
+
                     // Livres : lecture pour tout utilisateur authentifié
                     .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
 
@@ -82,7 +84,7 @@ public class BookHubSecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/api/loans/*/return").hasAnyRole("LIBRARIAN", "ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/loans").hasAnyRole("LIBRARIAN", "ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/loans").hasAnyRole("LIBRARIAN", "ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/api/loans/my").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/loans/my", "/api/loans/is-late").authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/loans").authenticated()
 
                     // Reservations
