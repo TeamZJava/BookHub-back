@@ -8,8 +8,8 @@ import java.util.List;
 public interface LoanService {
     List<LoanDTO> getUserLoans(String email);
 
-    // TODO : Retour d'un livre
-//    void finishLoan();
+    // Retour d'un livre
+    void finishLoan(int loanId);
 
     List<LoanDTO> getAllLoans();
 

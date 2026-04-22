@@ -52,6 +52,34 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public void finishLoan(int loanId) {
+        if(loanId <= 0) {
+            throw new BadRequestException("ID invalide");
+        }
+
+        // Récupère l'emprunt
+        Loan loan = loanRepository.findById(loanId).orElseThrow(
+                () -> new NotFoundException("Aucun emprunt avec cet ID")
+        );
+
+        Book bookTiedtoTheLoan = bookRepository.findById(loan.getBook().getId()).orElseThrow(
+                () -> new NotFoundException("Aucun livre avec cet ID")
+        );
+
+        // Passage à l'état rendu
+        loan.setStatus(LoanStatus.RETURNED);
+
+        // Date de retour
+        loan.setReturnDate(LocalDateTime.now());
+
+        // +1 copie disponible
+        bookTiedtoTheLoan.setAvailableCopies(bookTiedtoTheLoan.getAvailableCopies() + 1);
+
+        loanRepository.save(loan);
+        bookRepository.save(bookTiedtoTheLoan);
+    }
+
+    @Override
     public List<LoanDTO> getAllLoans() {
         // On remplit le tableau avec tout les emprunts
         List<Loan> loans = loanRepository.findAll();

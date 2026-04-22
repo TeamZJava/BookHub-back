@@ -32,7 +32,7 @@ public class LoanController {
                 .noneMatch(
                 a -> a.getAuthority().equals("ROLE_ADMIN")
                         || a.getAuthority().equals("ROLE_LIBRARIAN"))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ForbiddenException("Vous n'avez pas les droits pour accéder à cette page"));
+            throw new ForbiddenException("Vous n'avez pas les droits pour accéder à cette page");
         }
         return ResponseEntity.ok(loanService.getAllLoans());
     }
@@ -66,5 +66,24 @@ public class LoanController {
             Principal principal
     ) {
         return ResponseEntity.ok(loanService.getUserLoans(principal.getName()));
+    }
+
+    @PutMapping("/{id}/return")
+    public ResponseEntity<?> returnBook(
+            @PathVariable("id") int loanId,
+            Authentication authentication
+    ) {
+        if(authentication.getAuthorities()
+                .stream()
+                .noneMatch(
+                        a -> a.getAuthority().equals("ROLE_ADMIN")
+                                || a.getAuthority().equals("ROLE_LIBRARIAN"))) {
+            throw new ForbiddenException("Vous n'avez pas les droits pour accéder à cette page");
+        }
+
+        loanService.finishLoan(loanId);
+
+        // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 }
