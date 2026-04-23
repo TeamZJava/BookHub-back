@@ -58,7 +58,7 @@ public class LoanController {
             int bookId = Integer.parseInt(bookIdParam);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé..."));
             loanService.borrow(user.getId(), bookId);
-            return ResponseEntity.ok("Emprunt créé !");
+            return ResponseEntity.noContent().build();
         } catch (NumberFormatException e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre identifiant n'est pas un entier");
         } catch (RuntimeException e) {
