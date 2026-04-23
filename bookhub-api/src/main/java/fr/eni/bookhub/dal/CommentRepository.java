@@ -11,4 +11,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findByUserId(Integer userId);
 
+    List<Comment> findByReportedTrue();
+
 }
