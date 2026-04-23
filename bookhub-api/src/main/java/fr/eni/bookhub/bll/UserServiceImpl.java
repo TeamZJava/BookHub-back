@@ -168,4 +168,20 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Override
+    public void setActive(int userId) {
+        if (userId <= 0) {
+            throw new BadRequestException("ID invalide");
+        }
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("Utilisateur non trouvé")
+        );
+
+        // Inverse le booléen pour activer ou désactiver le rôle
+        user.setActive(!user.isActive());
+
+        userRepository.save(user);
+    }
+
 }

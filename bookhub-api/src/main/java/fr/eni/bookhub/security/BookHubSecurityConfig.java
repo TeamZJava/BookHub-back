@@ -63,7 +63,7 @@ public class BookHubSecurityConfig {
                     // Users
                     .requestMatchers("/api/users","/api/users/**", "/api/users/**").hasAnyRole("USER","LIBRARIAN" ,"ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/users").authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/users/{id}/role").hasAnyRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/users/{id}/role", "/users/{id}/active").hasAnyRole("ADMIN")
 
                     // Livres : lecture pour tout utilisateur authentifié
                     .requestMatchers(HttpMethod.GET, "/api/books/**").authenticated()
@@ -72,7 +72,6 @@ public class BookHubSecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/books").hasAnyRole("LIBRARIAN", "ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
-
 
                     // Commentaires et notes : tout utilisateur authentifié
                     .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()

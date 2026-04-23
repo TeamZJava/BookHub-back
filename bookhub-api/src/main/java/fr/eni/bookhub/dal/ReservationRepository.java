@@ -12,7 +12,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     List<Reservation> findByBookId(Integer bookId);
 
+    // Retourne le nombre de réservations en cours sur un livre
     int countByBookIdAndStatus(Integer bookId, ReservationStatus status);
+
+    // Retourne le nombre de réservations en cours d'un utilisateur
+    int countByUserIdAndStatus(int userId, ReservationStatus status);
 
     // Récupère les réservation d'un livre et les tris par date croissante
     List<Reservation> findByBookIdAndStatusOrderByReservationDateAsc(Integer bookId, ReservationStatus status);

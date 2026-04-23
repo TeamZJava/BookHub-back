@@ -19,4 +19,6 @@ public interface UserService {
     UserResponse getUserProfile(String email);
 
     UserResponse setRole(int userId, Role role);
+
+    void setActive(int userId);
 }

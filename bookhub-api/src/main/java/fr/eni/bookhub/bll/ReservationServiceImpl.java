@@ -54,6 +54,11 @@ public class ReservationServiceImpl implements ReservationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Utilisateur introuvable"));
 
+        // Calcul du nombre de réservations en cours de l'utilisateur
+        if(reservationRepository.countByUserIdAndStatus(user.getId(), ReservationStatus.PENDING) >= 5) {
+            throw new BadRequestException("Vous avez déjà trop de réservations en cours (5 maximum)");
+        }
+
         // Calcul du rang (dernier de la liste)
         int rang = reservationRepository.countByBookIdAndStatus(bookId, ReservationStatus.PENDING) + 1;
 

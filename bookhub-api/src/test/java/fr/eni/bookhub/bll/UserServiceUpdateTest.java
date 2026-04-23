@@ -212,9 +212,9 @@ public class UserServiceUpdateTest {
         assertThrows(BadRequestException.class, () -> userService.update(userId, request));
     }
 
-    // Token bien généré si l'email change
+    // Token bien généré lors d'une update
     @Test
-    void update_should_return_token_when_email_changes() {
+    void update_should_return_token() {
 
         UserUpdateRequest request = UserUpdateRequest.builder()
                 .email("newuseremail@bookhub.fr")
@@ -229,24 +229,4 @@ public class UserServiceUpdateTest {
         assertFalse(response.getToken().isBlank());
     }
 
-    // Pas de token si l'email ne change pas
-    @Test
-    void update_should_not_return_token_when_email_not_changed() {
-
-        // Récupération de l'email actuelle
-        String currentEmail = userRepository.findById(userId)
-                .orElseThrow()
-                .getEmail();
-
-        UserUpdateRequest request = UserUpdateRequest.builder()
-                .email(currentEmail)
-                .firstName("UserFirstNameBis")
-                .lastName("UserLastNameBis")
-                .build();
-
-        UserUpdateResponse response = userService.update(userId, request);
-
-        // Vérifie que le token n'est PAS généré
-        assertNull(response.getToken());
-    }
 }

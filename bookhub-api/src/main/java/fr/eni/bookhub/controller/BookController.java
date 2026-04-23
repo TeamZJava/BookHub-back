@@ -47,7 +47,10 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBook(@PathVariable("id") String idInPath, Principal principal) {
+    public ResponseEntity<?> getBook(
+            @PathVariable("id") String idInPath,
+            Principal principal
+    ) {
         try {
             int id = Integer.parseInt(idInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
@@ -70,7 +73,10 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBook(@Valid @RequestBody Book book) {
+    public ResponseEntity<?> createBook(
+            @Valid
+            @RequestBody Book book
+    ) {
         try {
             bookService.create(book);
             return ResponseEntity.ok(book);
@@ -80,7 +86,11 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable("id") String idInPath, @Valid @RequestBody Book book) {
+    public ResponseEntity<?> updateBook
+            (@PathVariable("id") String idInPath,
+             @Valid
+             @RequestBody Book book
+            ) {
         try {
             int id = Integer.parseInt(idInPath);
             return ResponseEntity.ok(bookService.update(id, book));
@@ -92,7 +102,8 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBook(@PathVariable("id") String idInPath) {
+    public ResponseEntity<?> deleteBook(
+            @PathVariable("id") String idInPath) {
         try {
             int id = Integer.parseInt(idInPath);
             bookService.delete(id);
@@ -105,9 +116,11 @@ public class BookController {
     }
 
     @PostMapping("/{id}/ratings")
-    public ResponseEntity<?> rateBook(@PathVariable("id") String idInPath,
-                                      @RequestParam String note,
-                                      Principal principal) {
+    public ResponseEntity<?> rateBook(
+            @PathVariable("id") String idInPath,
+            @RequestParam String note,
+            Principal principal
+    ) {
         try {
             int id = Integer.parseInt(idInPath);
             int noteInt = Integer.parseInt(note);
@@ -122,9 +135,12 @@ public class BookController {
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable("id") String idInPath,
-                                        @RequestBody Map<String, String> body,
-                                        Principal principal) {
+    public ResponseEntity<?> addComment(
+            @Valid
+            @PathVariable("id") String idInPath,
+            @RequestBody Map<String, String> body,
+            Principal principal
+    ) {
         try {
             int id = Integer.parseInt(idInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));

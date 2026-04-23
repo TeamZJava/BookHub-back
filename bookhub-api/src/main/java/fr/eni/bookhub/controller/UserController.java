@@ -27,13 +27,16 @@ public class UserController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<AuthenticationResponse> login(
-            @RequestBody AuthenticationRequest request) {
+            @RequestBody AuthenticationRequest request
+    ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     @PostMapping("/auth/register")
     public ResponseEntity<RegisterResponse> register(
-            @Valid @RequestBody RegisterRequest request) {
+            @Valid
+            @RequestBody RegisterRequest request
+    ) {
         RegisterResponse response = userService.add(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -50,7 +53,9 @@ public class UserController {
 
     // Delete — DELETE /api/users/{id}
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable int id
+    ) {
         userService.delete(id);
         // 204 No Content
         return ResponseEntity.noContent().build();
@@ -89,4 +94,21 @@ public class UserController {
         return ResponseEntity.ok(userService.setRole(id, Role.valueOf(role)));
     }
 
+    @PostMapping("/users/{id}/active")
+    public ResponseEntity<?> toggleActive(
+            @PathVariable int id,
+            Authentication authentication
+    ) {
+        if(authentication.getAuthorities()
+                .stream()
+                .noneMatch(
+                        a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new ForbiddenException("Vous n'avez pas les droits pour faire cette requête");
+        }
+
+        userService.setActive(id);
+
+        // 204
+        return ResponseEntity.noContent().build();
+    }
 }
