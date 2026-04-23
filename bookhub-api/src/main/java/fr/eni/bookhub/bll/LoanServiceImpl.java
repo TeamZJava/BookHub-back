@@ -40,14 +40,10 @@ public class LoanServiceImpl implements LoanService {
         // On remplit le tableau avec tout les emprunts liés à l'utilisateur
         List<Loan> loans = loanRepository.findByUserId(user.getId());
 
+       
         // Filtre sur le status : on récupère seulement les emprunts actifs ou en retard
-        loans.stream()
-                .filter(
-                        loan -> loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE
-                )
-                .toList();
-
         return loans.stream()
+                .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE)
                 .map(userMapper::toLoanDto)
                 .toList();
     }
@@ -87,13 +83,8 @@ public class LoanServiceImpl implements LoanService {
         List<Loan> loans = loanRepository.findAll();
 
         // Filtre sur le status : on récupère seulement les emprunts actifs ou en retard
-        loans.stream()
-                .filter(
-                        loan -> loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE
-                )
-                .toList();
-
         return loans.stream()
+                .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE)
                 .map(userMapper::toLoanDto)
                 .toList();
     }
