@@ -1,6 +1,5 @@
 package fr.eni.bookhub.bll;
 
-import fr.eni.bookhub.bo.Loan;
 import fr.eni.bookhub.dto.emprunts.LoanDTO;
 
 import java.util.List;
