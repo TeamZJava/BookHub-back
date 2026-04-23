@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserMapperImpl (fr.eni.bookhub.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (4/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (3/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40,7%
+  </span>
+  <span class="absValue">
+    (24/59)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.mapper;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.Loan;
+&nbsp;import fr.eni.bookhub.bo.Reservation;
+&nbsp;import fr.eni.bookhub.bo.User;
+&nbsp;import fr.eni.bookhub.dto.authentification.RegisterRequest;
+&nbsp;import fr.eni.bookhub.dto.authentification.RegisterResponse;
+&nbsp;import fr.eni.bookhub.dto.authentification.UserResponse;
+&nbsp;import fr.eni.bookhub.dto.authentification.UserUpdateResponse;
+&nbsp;import fr.eni.bookhub.dto.emprunts.LoanDTO;
+&nbsp;import fr.eni.bookhub.dto.reservation.ReservationDTO;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2026-04-22T14:00:51+0200&quot;,
+&nbsp;    comments = &quot;version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-9.4.1.jar, environment: Java 21.0.10 (Homebrew)&quot;
+&nbsp;)
+&nbsp;@Component
+<b class="fc">&nbsp;public class UserMapperImpl implements UserMapper {</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public User toEntity(RegisterRequest request) {
+<b class="pc">&nbsp;        if ( request == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User user = new User();</b>
+&nbsp;
+<b class="fc">&nbsp;        user.setEmail( request.getEmail() );</b>
+<b class="fc">&nbsp;        user.setFirstName( request.getFirstName() );</b>
+<b class="fc">&nbsp;        user.setLastName( request.getLastName() );</b>
+<b class="fc">&nbsp;        user.setPhone( request.getPhone() );</b>
+<b class="fc">&nbsp;        user.setTosAcceptationDate( request.getTosAcceptationDate() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public RegisterResponse toRegisterResponse(User user) {
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        RegisterResponse.RegisterResponseBuilder registerResponse = RegisterResponse.builder();</b>
+&nbsp;
+<b class="fc">&nbsp;        registerResponse.email( user.getEmail() );</b>
+<b class="fc">&nbsp;        registerResponse.firstName( user.getFirstName() );</b>
+<b class="fc">&nbsp;        registerResponse.lastName( user.getLastName() );</b>
+&nbsp;
+<b class="fc">&nbsp;        registerResponse.role( user.getRole().name() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return registerResponse.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserResponse toUserResponse(User user) {
+<b class="nc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        UserResponse userResponse = new UserResponse();</b>
+&nbsp;
+<b class="nc">&nbsp;        userResponse.setId( user.getId() );</b>
+<b class="nc">&nbsp;        userResponse.setEmail( user.getEmail() );</b>
+<b class="nc">&nbsp;        userResponse.setFirstName( user.getFirstName() );</b>
+<b class="nc">&nbsp;        userResponse.setLastName( user.getLastName() );</b>
+<b class="nc">&nbsp;        userResponse.setPhone( user.getPhone() );</b>
+<b class="nc">&nbsp;        userResponse.setActive( user.isActive() );</b>
+&nbsp;
+<b class="nc">&nbsp;        userResponse.setRole( user.getRole().name() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return userResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserUpdateResponse toUpdateResponse(User user) {
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserUpdateResponse userUpdateResponse = new UserUpdateResponse();</b>
+&nbsp;
+<b class="fc">&nbsp;        userUpdateResponse.setEmail( user.getEmail() );</b>
+<b class="fc">&nbsp;        userUpdateResponse.setFirstName( user.getFirstName() );</b>
+<b class="fc">&nbsp;        userUpdateResponse.setLastName( user.getLastName() );</b>
+<b class="fc">&nbsp;        userUpdateResponse.setPhone( user.getPhone() );</b>
+&nbsp;
+<b class="fc">&nbsp;        userUpdateResponse.setRole( user.getRole().name() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userUpdateResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ReservationDTO toReservationDTO(Reservation reservation) {
+<b class="nc">&nbsp;        if ( reservation == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        ReservationDTO reservationDTO = new ReservationDTO();</b>
+&nbsp;
+<b class="nc">&nbsp;        reservationDTO.setId( reservation.getId() );</b>
+<b class="nc">&nbsp;        reservationDTO.setUser( toUserResponse( reservation.getUser() ) );</b>
+<b class="nc">&nbsp;        reservationDTO.setBook( reservation.getBook() );</b>
+<b class="nc">&nbsp;        reservationDTO.setReservationDate( reservation.getReservationDate() );</b>
+<b class="nc">&nbsp;        reservationDTO.setRankInLine( reservation.getRankInLine() );</b>
+<b class="nc">&nbsp;        reservationDTO.setStatus( reservation.getStatus() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return reservationDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public LoanDTO toLoanDto(Loan loan) {
+<b class="nc">&nbsp;        if ( loan == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        LoanDTO loanDTO = new LoanDTO();</b>
+&nbsp;
+<b class="nc">&nbsp;        loanDTO.setId( loan.getId() );</b>
+<b class="nc">&nbsp;        loanDTO.setUser( toUserResponse( loan.getUser() ) );</b>
+<b class="nc">&nbsp;        loanDTO.setBook( loan.getBook() );</b>
+<b class="nc">&nbsp;        loanDTO.setLoanDate( loan.getLoanDate() );</b>
+<b class="nc">&nbsp;        loanDTO.setDueDate( loan.getDueDate() );</b>
+<b class="nc">&nbsp;        loanDTO.setReturnDate( loan.getReturnDate() );</b>
+<b class="nc">&nbsp;        loanDTO.setStatus( loan.getStatus() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return loanDTO;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

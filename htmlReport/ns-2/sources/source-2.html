@@ -1,0 +1,274 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BookServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.bll</a>
+</div>
+
+<h1>Coverage Summary for Class: BookServiceImpl (fr.eni.bookhub.bll)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BookServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63,6%
+  </span>
+  <span class="absValue">
+    (7/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    56,7%
+  </span>
+  <span class="absValue">
+    (17/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60,9%
+  </span>
+  <span class="absValue">
+    (42/69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.bll;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.*;
+&nbsp;import fr.eni.bookhub.bo.enums.LoanStatus;
+&nbsp;import fr.eni.bookhub.dto.catalogue.BookDetailDTO;
+&nbsp;import fr.eni.bookhub.dto.catalogue.CommentDTO;
+&nbsp;import fr.eni.bookhub.dal.*;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@AllArgsConstructor
+&nbsp;@Service
+&nbsp;public class BookServiceImpl implements BookService {
+&nbsp;
+&nbsp;    private BookRepository bookRepository;
+&nbsp;    private CommentRepository commentRepository;
+&nbsp;    private RatingRepository ratingRepository;
+&nbsp;    private FavoriteRepository favoriteRepository;
+&nbsp;    private LoanRepository loanRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Page&lt;Book&gt; search(String search, String category, Boolean available, Pageable pageable) {
+<b class="fc">&nbsp;        return bookRepository.search(search, category, available, pageable);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public BookDetailDTO getDetail(int bookId, int userId) {
+<b class="fc">&nbsp;        final Book book = chargerLivreParId(bookId);</b>
+&nbsp;
+<b class="fc">&nbsp;        final List&lt;Comment&gt; comments = commentRepository.findByBookId(bookId);</b>
+<b class="fc">&nbsp;        final List&lt;Rating&gt; ratings = ratingRepository.findByBookId(bookId);</b>
+&nbsp;
+&nbsp;        // Construire note user a donnée au livre (pour enrichir chaque commentaire)
+<b class="fc">&nbsp;        final Map&lt;Integer, Integer&gt; ratingParUser = ratings.stream()</b>
+<b class="fc">&nbsp;                .collect(Collectors.toMap(</b>
+<b class="nc">&nbsp;                        rating -&gt; rating.getUser().getId(),</b>
+&nbsp;                        Rating::getNote,
+<b class="nc">&nbsp;                        (note1, note2) -&gt; note2));</b>
+&nbsp;
+&nbsp;        // construire la liste de commentDTO
+<b class="fc">&nbsp;        final List&lt;CommentDTO&gt; commentDTOs = comments.stream()</b>
+<b class="fc">&nbsp;                .map(comment -&gt; new CommentDTO(</b>
+<b class="fc">&nbsp;                        comment.getId(),</b>
+<b class="fc">&nbsp;                        comment.getUser().getFirstName(),</b>
+<b class="fc">&nbsp;                        comment.getUser().getLastName(),</b>
+<b class="fc">&nbsp;                        comment.getComment(),</b>
+<b class="fc">&nbsp;                        comment.getCommentDate(),</b>
+<b class="fc">&nbsp;                        ratingParUser.get(comment.getUser().getId()),</b>
+<b class="fc">&nbsp;                        comment.getReported()))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        final boolean estFavori = favoriteRepository.existsByUserIdAndBookId(userId, bookId);</b>
+&nbsp;
+&nbsp;        // Note personnelle de l&#39;userconnecté
+<b class="fc">&nbsp;        Integer noteUtilisateur = null;</b>
+<b class="fc">&nbsp;        final Optional&lt;Rating&gt; noteOpt = ratingRepository.findByUserIdAndBookId(userId, bookId);</b>
+<b class="pc">&nbsp;        if (noteOpt.isPresent()) {</b>
+<b class="nc">&nbsp;            noteUtilisateur = noteOpt.get().getNote();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new BookDetailDTO(book, commentDTOs, estFavori, noteUtilisateur);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Book create(Book book) {
+<b class="fc">&nbsp;        if (book == null) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Le livre est obligatoire !&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        validerLivre(book);</b>
+<b class="fc">&nbsp;        book.setAddedAt(LocalDateTime.now());</b>
+<b class="fc">&nbsp;        book.setAvgRating(BigDecimal.ZERO);</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            final Book bookDB = bookRepository.save(book);</b>
+<b class="fc">&nbsp;            return bookDB;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Impossible de créer le livre&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Book update(int id, Book book) {
+<b class="nc">&nbsp;        if (book == null) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Le livre est obligatoire&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        final Book livreExistant = chargerLivreParId(id);</b>
+<b class="nc">&nbsp;        livreExistant.setTitle(book.getTitle());</b>
+<b class="nc">&nbsp;        livreExistant.setAuthor(book.getAuthor());</b>
+<b class="nc">&nbsp;        livreExistant.setIsbn(book.getIsbn());</b>
+<b class="nc">&nbsp;        livreExistant.setDescription(book.getDescription());</b>
+<b class="nc">&nbsp;        livreExistant.setCategory(book.getCategory());</b>
+<b class="nc">&nbsp;        livreExistant.setCoverUrl(book.getCoverUrl());</b>
+<b class="nc">&nbsp;        livreExistant.setTotalCopies(book.getTotalCopies());</b>
+<b class="nc">&nbsp;        livreExistant.setAvailableCopies(book.getAvailableCopies());</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            final Book bookDB = bookRepository.save(livreExistant);</b>
+<b class="nc">&nbsp;            return bookDB;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Impossible de modifier le livre (id = &quot; + id + &quot;)&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(int id) {
+<b class="nc">&nbsp;        if (id &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Identifiant n&#39;existe pas !&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (loanRepository.existsByBookIdAndStatus(id, LoanStatus.ACTIVE)) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Impossible de supprimer un livre avec des emprunts en cours&quot;);</b>
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            bookRepository.deleteById(id);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Impossible de supprimer le livre (id = &quot; + id + &quot;)&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    //recup categories
+&nbsp;    @Override
+&nbsp;    public List&lt;String&gt; getCategories() {
+<b class="fc">&nbsp;        return bookRepository.findAllCategories();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Book chargerLivreParId(int id) {
+<b class="pc">&nbsp;        if (id &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Identifiant n&#39;existe pas !&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        final Optional&lt;Book&gt; opt = bookRepository.findById(id);</b>
+<b class="pc">&nbsp;        if (opt.isPresent()) {</b>
+<b class="fc">&nbsp;            return opt.get();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;Aucun livre ne correspond à l&#39;identifiant &quot; + id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void validerLivre(Book book) {
+<b class="pc">&nbsp;        if (book.getTitle() == null || book.getTitle().isBlank()) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Le titre est obligatoire&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (book.getAuthor() == null || book.getAuthor().isBlank()) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;L&#39;auteur est obligatoire&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (book.getIsbn() == null || book.getIsbn().isBlank()) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;L&#39;ISBN est obligatoire&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (book.getTotalCopies() &lt;= 0) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Le nombre d&#39;exemplaires doit être positif&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (book.getAvailableCopies() &lt; 0) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Le nombre d&#39;exemplaires disponibles ne peut pas être négatif&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

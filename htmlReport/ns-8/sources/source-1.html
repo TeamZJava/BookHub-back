@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BookHubSecurityConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.security</a>
+</div>
+
+<h1>Coverage Summary for Class: BookHubSecurityConfig (fr.eni.bookhub.security)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BookHubSecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (38/38)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BookHubSecurityConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">BookHubSecurityConfig$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">BookHubSecurityConfig$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (38/38)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.security;
+&nbsp;
+&nbsp;import jakarta.servlet.Filter;
+&nbsp;import org.apache.juli.logging.Log;
+&nbsp;import org.apache.juli.logging.LogFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.http.HttpMethod;
+&nbsp;import org.springframework.security.authentication.AuthenticationProvider;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.http.SessionCreationPolicy;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+&nbsp;import org.springframework.web.cors.CorsConfiguration;
+&nbsp;import org.springframework.web.cors.CorsConfigurationSource;
+&nbsp;import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+<b class="fc">&nbsp;public class BookHubSecurityConfig {</b>
+<b class="fc">&nbsp;    protected final Log logger = LogFactory.getLog(getClass());</b>
+&nbsp;    // Contexte de JWT :
+&nbsp;    @Autowired
+&nbsp;    private Filter jwtAuthenticationFilter;
+&nbsp;    @Autowired
+&nbsp;    private AuthenticationProvider authenticationProvider;
+&nbsp;
+&nbsp;    //Le front et l’API ne sont pas sur le même port ; le navigateur bloque les appels entre
+&nbsp;    // origines différentes ; on configure le back pour autoriser l’origine du front (CORS),
+&nbsp;    // sinon la connexion depuis Angular ne peut pas fonctionner.
+&nbsp;    @Bean
+&nbsp;    CorsConfigurationSource corsConfigurationSource() {
+<b class="fc">&nbsp;        CorsConfiguration config = new CorsConfiguration();</b>
+<b class="fc">&nbsp;        config.setAllowedOrigins(List.of(&quot;http://localhost:4200&quot;));</b>
+<b class="fc">&nbsp;        config.setAllowedMethods(List.of(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;));</b>
+<b class="fc">&nbsp;        config.setAllowedHeaders(List.of(&quot;*&quot;));</b>
+<b class="fc">&nbsp;        config.setAllowCredentials(true);</b>
+<b class="fc">&nbsp;        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</b>
+<b class="fc">&nbsp;        source.registerCorsConfiguration(&quot;/**&quot;, config);</b>
+<b class="fc">&nbsp;        return source;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Restriction des URLs selon la connexion utilisateur et leurs rôles
+&nbsp;    @Bean
+&nbsp;    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+<b class="fc">&nbsp;        http.cors(cors -&gt; cors.configurationSource(corsConfigurationSource()));</b>
+<b class="fc">&nbsp;        http.authorizeHttpRequests(auth-&gt; {</b>
+<b class="fc">&nbsp;            auth</b>
+&nbsp;                    //Permettre l&#39;accès à l&#39;URL login et register à tout le monde
+&nbsp;                    // + a la doc swagger
+<b class="fc">&nbsp;                    .requestMatchers(</b>
+&nbsp;                            &quot;/api/auth/**&quot;,
+&nbsp;                            &quot;/swagger-ui/**&quot;,
+&nbsp;                            &quot;/v3/api-docs/**&quot;,
+&nbsp;                            &quot;/v3/api-docs&quot;
+<b class="fc">&nbsp;                    ).permitAll()</b>
+&nbsp;
+&nbsp;                    // Users
+<b class="fc">&nbsp;                    .requestMatchers(&quot;/api/users&quot;,&quot;/api/users/**&quot;, &quot;/api/users/**&quot;).hasAnyRole(&quot;USER&quot;,&quot;LIBRARIAN&quot; ,&quot;ADMIN&quot;)</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.PUT, &quot;/api/users&quot;).authenticated()</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.PUT, &quot;/users/{id}/role&quot;, &quot;/users/{id}/active&quot;).hasAnyRole(&quot;ADMIN&quot;)</b>
+&nbsp;
+&nbsp;                    // Livres : lecture pour tout utilisateur authentifié
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.GET, &quot;/api/books/**&quot;).authenticated()</b>
+&nbsp;
+&nbsp;                    // Livres : création et modification et suppression réservées aux LIBRARIAN et ADMIN
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.POST, &quot;/api/books&quot;).hasAnyRole(&quot;LIBRARIAN&quot;, &quot;ADMIN&quot;)</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.PUT, &quot;/api/books/**&quot;).hasAnyRole(&quot;LIBRARIAN&quot;, &quot;ADMIN&quot;)</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.DELETE, &quot;/api/books/**&quot;).hasAnyRole(&quot;LIBRARIAN&quot;, &quot;ADMIN&quot;)</b>
+&nbsp;
+&nbsp;                    // Commentaires et notes : tout utilisateur authentifié
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.POST, &quot;/api/books/**&quot;).authenticated()</b>
+&nbsp;
+&nbsp;                    // Favoris, emprunts, réservations : tout utilisateur authentifié
+<b class="fc">&nbsp;                    .requestMatchers(&quot;/api/favorites/**&quot;).authenticated()</b>
+&nbsp;
+&nbsp;                    // Emprunts
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.PUT, &quot;/api/loans/*/return&quot;).hasAnyRole(&quot;LIBRARIAN&quot;, &quot;ADMIN&quot;)</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.GET, &quot;/api/loans&quot;).hasAnyRole(&quot;LIBRARIAN&quot;, &quot;ADMIN&quot;)</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.PUT, &quot;/api/loans&quot;).hasAnyRole(&quot;LIBRARIAN&quot;, &quot;ADMIN&quot;)</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.GET, &quot;/api/loans/my&quot;, &quot;/api/loans/is-late&quot;).authenticated()</b>
+<b class="fc">&nbsp;                    .requestMatchers(HttpMethod.POST, &quot;/api/loans&quot;).authenticated()</b>
+&nbsp;
+&nbsp;                    // Reservations
+<b class="fc">&nbsp;                    .requestMatchers(&quot;/api/reservations&quot;, &quot;/api/reservations/*&quot;).authenticated()</b>
+&nbsp;
+&nbsp;                    // Toute autre URL est refusée
+<b class="fc">&nbsp;                    .anyRequest().denyAll();</b>
+&nbsp;        });
+&nbsp;
+&nbsp;
+&nbsp;        // Désactiver Cross Site Request Forgery
+&nbsp;        // Inutile pour les API REST en Stateless
+<b class="fc">&nbsp;        http.csrf(csrf -&gt; {</b>
+<b class="fc">&nbsp;            csrf.disable();</b>
+&nbsp;        });
+&nbsp;        //Connexion de l&#39;utilisateur
+<b class="fc">&nbsp;        http.authenticationProvider(authenticationProvider);</b>
+&nbsp;        //Activer le filtre JWT et l&#39;authentication de l&#39;utilisateur
+<b class="fc">&nbsp;        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);</b>
+&nbsp;        // Session Stateless
+<b class="fc">&nbsp;        http.sessionManagement(session -&gt; {</b>
+<b class="fc">&nbsp;            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);</b>
+&nbsp;        });
+<b class="fc">&nbsp;        return http.build();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

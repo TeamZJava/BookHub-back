@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LoanController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: LoanController (fr.eni.bookhub.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LoanController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.controller;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.Loan;
+&nbsp;import fr.eni.bookhub.bo.User;
+&nbsp;import fr.eni.bookhub.bll.LoanService;
+&nbsp;import fr.eni.bookhub.dal.UserRepository;
+&nbsp;import fr.eni.bookhub.dto.emprunts.LoanDTO;
+&nbsp;import fr.eni.bookhub.errors.ForbiddenException;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.security.Principal;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@AllArgsConstructor
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/loans&quot;)
+&nbsp;public class LoanController {
+&nbsp;
+&nbsp;    private LoanService loanService;
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;?&gt; findAll(
+&nbsp;            Authentication authentication
+&nbsp;    ) {
+<b class="nc">&nbsp;        if(authentication.getAuthorities()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .noneMatch(</b>
+<b class="nc">&nbsp;                a -&gt; a.getAuthority().equals(&quot;ROLE_ADMIN&quot;)</b>
+<b class="nc">&nbsp;                        || a.getAuthority().equals(&quot;ROLE_LIBRARIAN&quot;))) {</b>
+<b class="nc">&nbsp;            throw new ForbiddenException(&quot;Vous n&#39;avez pas les droits pour accéder à cette page&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(loanService.getAllLoans());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/is-late&quot;)
+&nbsp;    public ResponseEntity&lt;Boolean&gt; hasOverdue(
+&nbsp;            Principal principal
+&nbsp;    ) {
+&nbsp;        try {
+<b class="nc">&nbsp;            User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -&gt; new RuntimeException(&quot;Utilisateur non trouvé&quot;));</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(loanService.isLate(user.getId()));</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.ok(false);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;?&gt; borrow(
+&nbsp;            @RequestParam(&quot;bookId&quot;) String bookIdParam,
+&nbsp;            Principal principal
+&nbsp;    ) {
+&nbsp;        try {
+<b class="nc">&nbsp;            int bookId = Integer.parseInt(bookIdParam);</b>
+<b class="nc">&nbsp;            User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -&gt; new RuntimeException(&quot;Utilisateur non trouvé...&quot;));</b>
+<b class="nc">&nbsp;            loanService.borrow(user.getId(), bookId);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;Emprunt créé !&quot;);</b>
+&nbsp;        } catch (NumberFormatException e) {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(&quot;Votre identifiant n&#39;est pas un entier&quot;);</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/my&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;LoanDTO&gt;&gt; getMyLoans(
+&nbsp;            Principal principal
+&nbsp;    ) {
+<b class="nc">&nbsp;        return ResponseEntity.ok(loanService.getUserLoans(principal.getName()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}/return&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; returnBook(
+&nbsp;            @PathVariable(&quot;id&quot;) int loanId,
+&nbsp;            Authentication authentication
+&nbsp;    ) {
+<b class="nc">&nbsp;        if(authentication.getAuthorities()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .noneMatch(</b>
+<b class="nc">&nbsp;                        a -&gt; a.getAuthority().equals(&quot;ROLE_ADMIN&quot;)</b>
+<b class="nc">&nbsp;                                || a.getAuthority().equals(&quot;ROLE_LIBRARIAN&quot;))) {</b>
+<b class="nc">&nbsp;            throw new ForbiddenException(&quot;Vous n&#39;avez pas les droits pour accéder à cette page&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        loanService.finishLoan(loanId);</b>
+&nbsp;
+&nbsp;        // 204 No Content
+<b class="nc">&nbsp;        return ResponseEntity.noContent().build();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

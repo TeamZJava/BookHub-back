@@ -1,0 +1,154 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GlobalExceptionHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.errors</a>
+</div>
+
+<h1>Coverage Summary for Class: GlobalExceptionHandler (fr.eni.bookhub.errors)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GlobalExceptionHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16,7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9,1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.errors;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.web.bind.MethodArgumentNotValidException;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestControllerAdvice
+<b class="fc">&nbsp;public class GlobalExceptionHandler {</b>
+&nbsp;
+&nbsp;    @ExceptionHandler(MethodArgumentNotValidException.class)
+&nbsp;    @ResponseStatus(HttpStatus.BAD_REQUEST)
+&nbsp;    public ErrorResponse handleValidationErrors(MethodArgumentNotValidException ex) {
+&nbsp;
+<b class="nc">&nbsp;        List&lt;String&gt; errors = ex.getBindingResult()</b>
+<b class="nc">&nbsp;                .getFieldErrors()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .map(error -&gt; error.getField() + &quot; : &quot; + error.getDefaultMessage())</b>
+<b class="nc">&nbsp;                .toList();</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ErrorResponse(</b>
+&nbsp;                400,
+&nbsp;                errors
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(NotFoundException.class)
+&nbsp;    @ResponseStatus(HttpStatus.NOT_FOUND)
+&nbsp;    public ErrorResponse handleNotFound(NotFoundException ex) {
+<b class="nc">&nbsp;        return new ErrorResponse(404, List.of(ex.getMessage()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(ConflictException.class)
+&nbsp;    @ResponseStatus(HttpStatus.CONFLICT)
+&nbsp;    public ErrorResponse handleConflict(ConflictException ex) {
+<b class="nc">&nbsp;        return new ErrorResponse(409, List.of(ex.getMessage()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(ForbiddenException.class)
+&nbsp;    @ResponseStatus(HttpStatus.FORBIDDEN)
+&nbsp;    public ErrorResponse handleGlobal(ForbiddenException ex) {
+<b class="nc">&nbsp;        return new ErrorResponse(403, List.of(ex.getMessage()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(Exception.class)
+&nbsp;    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+&nbsp;    public ErrorResponse handleGlobal(Exception ex) {
+<b class="nc">&nbsp;        return new ErrorResponse(500, List.of(ex.getMessage()));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>
