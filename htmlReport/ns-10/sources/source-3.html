@@ -1,0 +1,106 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RegisterRequest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.dto.authentification</a>
+</div>
+
+<h1>Coverage Summary for Class: RegisterRequest (fr.eni.bookhub.dto.authentification)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">RegisterRequest</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.dto.authentification;
+&nbsp;
+&nbsp;import jakarta.validation.constraints.*;
+&nbsp;import lombok.*;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;@Builder
+&nbsp;public class RegisterRequest {
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Email obligatoire&quot;)
+&nbsp;    @Email(message = &quot;Format email invalide&quot;)
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Mot de passe obligatoire&quot;)
+&nbsp;    @Pattern(
+&nbsp;            regexp = &quot;^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{12,}$&quot;,
+&nbsp;            message = &quot;Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.&quot;
+&nbsp;    )
+&nbsp;    private String password;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Prénom obligatoire&quot;)
+&nbsp;    @Size(max = 100)
+&nbsp;    private String firstName;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Nom obligatoire&quot;)
+&nbsp;    @Size(max = 100)
+&nbsp;    private String lastName;
+&nbsp;
+&nbsp;    @Size(max = 12)
+&nbsp;    private String phone;
+&nbsp;
+&nbsp;    @NotNull(message = &quot;Vous devez accepter les CGU&quot;)
+&nbsp;    private LocalDateTime tosAcceptationDate;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

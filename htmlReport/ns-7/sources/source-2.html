@@ -1,0 +1,110 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserMapper (fr.eni.bookhub.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserMapper</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.mapper;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.Loan;
+&nbsp;import fr.eni.bookhub.bo.Reservation;
+&nbsp;import fr.eni.bookhub.bo.User;
+&nbsp;import fr.eni.bookhub.dto.authentification.RegisterRequest;
+&nbsp;import fr.eni.bookhub.dto.authentification.RegisterResponse;
+&nbsp;import fr.eni.bookhub.dto.authentification.UserResponse;
+&nbsp;import fr.eni.bookhub.dto.authentification.UserUpdateResponse;
+&nbsp;import fr.eni.bookhub.dto.emprunts.LoanDTO;
+&nbsp;import fr.eni.bookhub.dto.reservation.ReservationDTO;
+&nbsp;import org.mapstruct.*;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;)
+&nbsp;public interface UserMapper {
+&nbsp;
+&nbsp;    // RegisterRequest -&gt; User
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;role&quot;, ignore = true)        // forcé à USER dans la BLL
+&nbsp;    @Mapping(target = &quot;active&quot;, ignore = true)      // forcé à true dans la BLL
+&nbsp;    @Mapping(target = &quot;inscriptionDate&quot;, ignore = true) // now() dans la BLL
+&nbsp;    @Mapping(target = &quot;password&quot;, ignore = true)    // Hashé avec bcrypt dans la BLL
+&nbsp;    @Mapping(target = &quot;authorities&quot;, ignore = true) // pour ignorer le warning MapStruct
+&nbsp;    User toEntity(RegisterRequest request);
+&nbsp;
+&nbsp;    // User -&gt; RegisterResponse
+&nbsp;    // role est un enum, on le convertit en String avec .name()
+&nbsp;    @Mapping(target = &quot;role&quot;, expression = &quot;java(user.getRole().name())&quot;)
+&nbsp;    RegisterResponse toRegisterResponse(User user);
+&nbsp;
+&nbsp;    // User -&gt; UserResponse (pour les GET /users/**)
+&nbsp;    @Mapping(target = &quot;role&quot;, expression = &quot;java(user.getRole().name())&quot;)
+&nbsp;    UserResponse toUserResponse(User user);
+&nbsp;
+&nbsp;    @Mapping(target = &quot;role&quot;, expression = &quot;java(user.getRole().name())&quot;)
+&nbsp;    @Mapping(target = &quot;token&quot;, ignore = true)
+&nbsp;    UserUpdateResponse toUpdateResponse(User user);
+&nbsp;
+&nbsp;    ReservationDTO toReservationDTO(Reservation reservation);
+&nbsp;
+&nbsp;    LoanDTO toLoanDto(Loan loan);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

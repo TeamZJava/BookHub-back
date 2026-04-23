@@ -1,0 +1,92 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.bll</a>
+</div>
+
+<h1>Coverage Summary for Class: UserService (fr.eni.bookhub.bll)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.bll;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.enums.Role;
+&nbsp;import fr.eni.bookhub.dto.authentification.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface UserService {
+&nbsp;    RegisterResponse add(RegisterRequest user);
+&nbsp;
+&nbsp;    UserUpdateResponse update(int id, UserUpdateRequest request);
+&nbsp;
+&nbsp;    void delete(int id);
+&nbsp;
+&nbsp;    UserResponse findById(int id);
+&nbsp;
+&nbsp;    List&lt;UserResponse&gt; findAll();
+&nbsp;
+&nbsp;    UserResponse getUserProfile(String email);
+&nbsp;
+&nbsp;    UserResponse setRole(int userId, Role role);
+&nbsp;
+&nbsp;    void setActive(int userId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

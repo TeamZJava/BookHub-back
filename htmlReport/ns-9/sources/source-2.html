@@ -1,0 +1,178 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JwtAuthenticationFilter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.security.jwt</a>
+</div>
+
+<h1>Coverage Summary for Class: JwtAuthenticationFilter (fr.eni.bookhub.security.jwt)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JwtAuthenticationFilter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.security.jwt;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bll.JwtService;
+&nbsp;import org.springframework.lang.NonNull;
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;import org.springframework.security.core.userdetails.*;
+&nbsp;import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.web.filter.OncePerRequestFilter;
+&nbsp;import jakarta.servlet.*;
+&nbsp;import jakarta.servlet.http.*;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;
+&nbsp;//Doit être active dès qu&#39;il y a une requête
+&nbsp;//Doit devenir un bean pour spring
+&nbsp;@Component
+&nbsp;@AllArgsConstructor
+&nbsp;public class JwtAuthenticationFilter extends OncePerRequestFilter {
+&nbsp;    // Injection de la couche BLL pour gérer le token
+&nbsp;    private JwtService jwtService;
+&nbsp;    // Injection de la couche BLL pour gérer les données de la DB
+&nbsp;    private UserDetailsService userDetailsService;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    protected void doFilterInternal(@NonNull HttpServletRequest request,
+&nbsp;                                    @NonNull HttpServletResponse response,
+&nbsp;                                    @NonNull FilterChain filterChain)
+&nbsp;            throws ServletException, IOException {
+&nbsp;        // vérifier le jeton JWT
+<b class="nc">&nbsp;        final String authHeader = request.getHeader(&quot;Authorization&quot;);</b>
+&nbsp;        final String jwt;
+<b class="nc">&nbsp;        if (authHeader == null || !authHeader.startsWith(&quot;Bearer &quot;)) {</b>
+<b class="nc">&nbsp;            filterChain.doFilter(request, response);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        jwt = authHeader.substring(7);// 7 correspond à Bearer</b>
+&nbsp;        // Vérification de l&#39;utilisateur
+<b class="nc">&nbsp;        final String userEmail = jwtService.extractUserName(jwt);// Extraire du jeton JWT</b>
+&nbsp;        // Validation des données par rapport à la DB
+<b class="nc">&nbsp;        if (userEmail != null &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {</b>
+&nbsp;            // Check in DB
+<b class="nc">&nbsp;            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);</b>
+&nbsp;            // Validation du jeton JWT
+<b class="nc">&nbsp;            if (jwtService.isTokenValid(jwt, userDetails)) {</b>
+&nbsp;                // Gestion du contexte de sécurité de l’utilisateur
+&nbsp;                //Création d&#39;un nouveau jeton avec les informations et les rôles de l&#39;utilisateur
+<b class="nc">&nbsp;                UsernamePasswordAuthenticationToken authToken = new</b>
+&nbsp;                        UsernamePasswordAuthenticationToken(userEmail, null,
+<b class="nc">&nbsp;                        userDetails.getAuthorities());</b>
+&nbsp;                //Transmettre les détails de la demande d’origine
+<b class="nc">&nbsp;                authToken.setDetails(new</b>
+<b class="nc">&nbsp;                        WebAuthenticationDetailsSource().buildDetails(request));</b>
+&nbsp;                //Mise à jour du contexte de sécurité
+<b class="nc">&nbsp;                SecurityContextHolder.getContext().setAuthentication(authToken);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        filterChain.doFilter(request, response);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

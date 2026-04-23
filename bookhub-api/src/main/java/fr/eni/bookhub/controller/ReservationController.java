@@ -19,7 +19,10 @@ public class ReservationController {
     private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<?> reserve(@RequestParam("bookId") String bookIdParam, Principal principal) {
+    public ResponseEntity<?> reserve(
+            @RequestParam("bookId") String bookIdParam,
+            Principal principal
+    ) {
         try {
             int bookId = Integer.parseInt(bookIdParam);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));

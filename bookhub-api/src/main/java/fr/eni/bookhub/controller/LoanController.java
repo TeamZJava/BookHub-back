@@ -38,7 +38,9 @@ public class LoanController {
     }
 
     @GetMapping("/is-late")
-    public ResponseEntity<Boolean> hasOverdue(Principal principal) {
+    public ResponseEntity<Boolean> hasOverdue(
+            Principal principal
+    ) {
         try {
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             return ResponseEntity.ok(loanService.isLate(user.getId()));
@@ -48,7 +50,10 @@ public class LoanController {
     }
 
     @PostMapping
-    public ResponseEntity<?> borrow(@RequestParam("bookId") String bookIdParam, Principal principal) {
+    public ResponseEntity<?> borrow(
+            @RequestParam("bookId") String bookIdParam,
+            Principal principal
+    ) {
         try {
             int bookId = Integer.parseInt(bookIdParam);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé..."));

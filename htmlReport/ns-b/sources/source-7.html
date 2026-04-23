@@ -1,0 +1,91 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ReservationRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.dal</a>
+</div>
+
+<h1>Coverage Summary for Class: ReservationRepository (fr.eni.bookhub.dal)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ReservationRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.dal;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.Reservation;
+&nbsp;import fr.eni.bookhub.bo.enums.ReservationStatus;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ReservationRepository extends JpaRepository&lt;Reservation, Integer&gt; {
+&nbsp;
+&nbsp;    List&lt;Reservation&gt; findByUserId(Integer userId);
+&nbsp;
+&nbsp;    List&lt;Reservation&gt; findByBookId(Integer bookId);
+&nbsp;
+&nbsp;    // Retourne le nombre de réservations en cours sur un livre
+&nbsp;    int countByBookIdAndStatus(Integer bookId, ReservationStatus status);
+&nbsp;
+&nbsp;    // Retourne le nombre de réservations en cours d&#39;un utilisateur
+&nbsp;    int countByUserIdAndStatus(int userId, ReservationStatus status);
+&nbsp;
+&nbsp;    // Récupère les réservation d&#39;un livre et les tris par date croissante
+&nbsp;    List&lt;Reservation&gt; findByBookIdAndStatusOrderByReservationDateAsc(Integer bookId, ReservationStatus status);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

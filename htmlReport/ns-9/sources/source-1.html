@@ -1,0 +1,235 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JwtAppConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.security.jwt</a>
+</div>
+
+<h1>Coverage Summary for Class: JwtAppConfig (fr.eni.bookhub.security.jwt)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JwtAppConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JwtAppConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">JwtAppConfig$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">JwtAppConfig$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+  <tr>
+    <td class="name">JwtAppConfig$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/18)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.security.jwt;
+&nbsp;
+&nbsp;import fr.eni.bookhub.dal.UserRepository;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.security.authentication.*;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.AuthenticationException;
+&nbsp;import org.springframework.security.core.userdetails.UserDetails;
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService;
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+&nbsp;import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;public class JwtAppConfig {
+&nbsp;    private final UserRepository uRepository;
+<b class="fc">&nbsp;    public JwtAppConfig(UserRepository uRepository) {</b>
+<b class="fc">&nbsp;        this.uRepository = uRepository;</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Fournit le service qui charge les utilisateurs depuis la base de données
+&nbsp;     */
+&nbsp;    @Bean
+&nbsp;    UserDetailsService userDetailsService() {
+<b class="fc">&nbsp;        return username -&gt; uRepository.findByEmail(username)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found&quot;));</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Fournisseur d&#39;authentification personnalisé
+&nbsp;     */
+&nbsp;    @Bean
+&nbsp;    AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder
+&nbsp;            passwordEncoder) {
+<b class="fc">&nbsp;        return new AuthenticationProvider() {</b>
+&nbsp;            @Override
+&nbsp;            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+<b class="fc">&nbsp;                String username = authentication.getName();</b>
+<b class="fc">&nbsp;                String password = authentication.getCredentials().toString();</b>
+<b class="fc">&nbsp;                UserDetails user = userDetailsService.loadUserByUsername(username);</b>
+<b class="fc">&nbsp;                if (!passwordEncoder.matches(password, user.getPassword())) {</b>
+<b class="fc">&nbsp;                    throw new BadCredentialsException(&quot;Bad credentials&quot;);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());</b>
+&nbsp;            }
+&nbsp;            @Override
+&nbsp;            public boolean supports(Class&lt;?&gt; authentication) {
+<b class="fc">&nbsp;                return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);</b>
+&nbsp;            }
+&nbsp;        };
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Gestionnaire d&#39;authentification basé sur le fournisseur personnalisé
+&nbsp;     */
+&nbsp;    @Bean
+&nbsp;    AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
+<b class="fc">&nbsp;        return new ProviderManager(authenticationProvider);</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Encodeur de mot de passe
+&nbsp;     */
+&nbsp;    @Bean
+&nbsp;    PasswordEncoder passwordEncoder() {
+<b class="fc">&nbsp;        String idForEncode = &quot;bcrypt&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, PasswordEncoder&gt; encoders = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        encoders.put(&quot;bcrypt&quot;, new BCryptPasswordEncoder(12));</b>
+&nbsp;
+<b class="fc">&nbsp;        return new DelegatingPasswordEncoder(idForEncode, encoders);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

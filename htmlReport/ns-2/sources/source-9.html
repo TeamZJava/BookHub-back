@@ -1,0 +1,321 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.bll</a>
+</div>
+
+<h1>Coverage Summary for Class: UserServiceImpl (fr.eni.bookhub.bll)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76,7%
+  </span>
+  <span class="absValue">
+    (23/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65,1%
+  </span>
+  <span class="absValue">
+    (41/63)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76,7%
+  </span>
+  <span class="absValue">
+    (23/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65,1%
+  </span>
+  <span class="absValue">
+    (41/63)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.bll;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.enums.Role;
+&nbsp;import fr.eni.bookhub.bo.User;
+&nbsp;import fr.eni.bookhub.dal.UserRepository;
+&nbsp;import fr.eni.bookhub.dto.authentification.*;
+&nbsp;import fr.eni.bookhub.errors.BadRequestException;
+&nbsp;import fr.eni.bookhub.errors.ConflictException;
+&nbsp;import fr.eni.bookhub.errors.NotFoundException;
+&nbsp;import fr.eni.bookhub.mapper.UserMapper;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@AllArgsConstructor
+&nbsp;@Service
+&nbsp;public class UserServiceImpl implements UserService {
+&nbsp;    UserRepository userRepository;
+&nbsp;    private final PasswordEncoder passwordEncoder;
+&nbsp;    private final UserMapper userMapper;
+&nbsp;    private final JwtService jwtService;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public RegisterResponse add(RegisterRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        if (userRepository.existsByEmail(request.getEmail())) {</b>
+<b class="fc">&nbsp;            throw new ConflictException(&quot;Cet email est déjà utilisé&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (request.getTosAcceptationDate() == null) {</b>
+<b class="fc">&nbsp;            throw new BadRequestException(&quot;Vous devez accepter les CGU&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // MapStruct convertit le DTO en entité (email, firstName, lastName, phone, tos...)
+<b class="fc">&nbsp;        User user = userMapper.toEntity(request);</b>
+&nbsp;
+&nbsp;        // force les valeurs que le client ne doit pas pouvoir définir
+<b class="fc">&nbsp;        user.setRole(Role.USER);</b>
+<b class="fc">&nbsp;        user.setActive(true);</b>
+<b class="fc">&nbsp;        user.setInscriptionDate(LocalDateTime.now());</b>
+&nbsp;
+&nbsp;        // Hachage du mot de passe
+<b class="fc">&nbsp;        user.setPassword(passwordEncoder.encode(request.getPassword()));</b>
+&nbsp;
+&nbsp;        // Sauvegarde
+<b class="fc">&nbsp;        User savedUser = userRepository.save(user);</b>
+&nbsp;
+&nbsp;        // Conversion vers le DTO de réponse
+<b class="fc">&nbsp;        RegisterResponse response = userMapper.toRegisterResponse(savedUser);</b>
+&nbsp;
+<b class="fc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public UserUpdateResponse update(int id, UserUpdateRequest request) {
+&nbsp;
+&nbsp;        // Vérification ID
+<b class="fc">&nbsp;        if (id &lt; 1) {</b>
+<b class="fc">&nbsp;            throw new BadRequestException(&quot;ID invalide&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Vérification existence en base
+<b class="fc">&nbsp;        User userEnBase = userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new NotFoundException(&quot;Utilisateur introuvable&quot;));</b>
+&nbsp;
+&nbsp;        // Vérification email
+<b class="fc">&nbsp;        if (!userEnBase.getEmail().equals(request.getEmail())</b>
+<b class="fc">&nbsp;                &amp;&amp; userRepository.existsByEmail(request.getEmail())) {</b>
+<b class="fc">&nbsp;            throw new ConflictException(&quot;Cet email est déjà utilisé&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Mise à jour uniquement des champs autorisés
+<b class="fc">&nbsp;        userEnBase.setEmail(request.getEmail());</b>
+<b class="fc">&nbsp;        userEnBase.setFirstName(request.getFirstName());</b>
+<b class="fc">&nbsp;        userEnBase.setLastName(request.getLastName());</b>
+<b class="fc">&nbsp;        userEnBase.setPhone(request.getPhone());</b>
+&nbsp;
+&nbsp;        // Mot de passe seulement si l&#39;utilisateur en envoie un nouveau
+<b class="pc">&nbsp;        if (request.getPassword() != null &amp;&amp; !request.getPassword().isBlank()) {</b>
+&nbsp;
+&nbsp;            // L&#39;ancien mot de passe est obligatoire si on veut en définir un nouveau
+<b class="pc">&nbsp;            if (request.getOldPassword() == null || request.getOldPassword().isBlank()) {</b>
+<b class="fc">&nbsp;                throw new BadRequestException(&quot;L&#39;ancien mot de passe est obligatoire pour en définir un nouveau&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Vérifie que l&#39;ancien mot de passe correspond bien à celui en base
+<b class="fc">&nbsp;            if (!passwordEncoder.matches(request.getOldPassword(), userEnBase.getPassword())) {</b>
+<b class="fc">&nbsp;                throw new BadRequestException(&quot;L&#39;ancien mot de passe est incorrect&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Hachage du mdp
+<b class="fc">&nbsp;            userEnBase.setPassword(passwordEncoder.encode(request.getPassword()));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Sauvegarde
+<b class="fc">&nbsp;        User savedUser = userRepository.save(userEnBase);</b>
+&nbsp;
+&nbsp;        // Conversion vers le DTO
+<b class="fc">&nbsp;        UserUpdateResponse response = userMapper.toUpdateResponse(savedUser);</b>
+&nbsp;
+&nbsp;        // Nouveau token
+<b class="fc">&nbsp;        response.setToken(jwtService.generateToken(savedUser));</b>
+&nbsp;
+<b class="fc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(int id) {
+<b class="fc">&nbsp;        if(id &lt; 1) {</b>
+<b class="fc">&nbsp;            throw new BadRequestException(&quot;L&#39;id doit être supérieur à zéro&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (!userRepository.existsById(id)) {</b>
+<b class="fc">&nbsp;            throw new BadRequestException(&quot;Utilisateur introuvable avec l&#39;id : &quot; + id);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        userRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserResponse findById(int id) {
+<b class="pc">&nbsp;        if (id &lt; 1) {</b>
+<b class="nc">&nbsp;            throw new BadRequestException(&quot;L&#39;ID doit être supérieur à zéro&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User user = userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new NotFoundException(&quot;Aucun utilisateur trouvé avec cet ID&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        return userMapper.toUserResponse(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UserResponse&gt; findAll() {
+<b class="nc">&nbsp;        return userRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .map(userMapper::toUserResponse)</b>
+<b class="nc">&nbsp;                .toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserResponse getUserProfile(String email) {
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(email)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new NotFoundException(&quot;Aucun utilisateur trouvé avec cet email&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        return userMapper.toUserResponse(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserResponse setRole(int userId, Role role) {
+<b class="nc">&nbsp;        if (userId &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new BadRequestException(&quot;ID invalide&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        User user = userRepository.findById(userId).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new NotFoundException(&quot;Utilisateur non trouvé&quot;)</b>
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        user.setRole(role);</b>
+&nbsp;
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;        return userMapper.toUserResponse(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setActive(int userId) {
+<b class="nc">&nbsp;        if (userId &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new BadRequestException(&quot;ID invalide&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        User user = userRepository.findById(userId).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new NotFoundException(&quot;Utilisateur non trouvé&quot;)</b>
+&nbsp;        );
+&nbsp;
+&nbsp;        // Inverse le booléen pour activer ou désactiver le rôle
+<b class="nc">&nbsp;        user.setActive(!user.isActive());</b>
+&nbsp;
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>

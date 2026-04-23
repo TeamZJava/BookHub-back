@@ -22,7 +22,9 @@ public class FavoriteController {
     private UserRepository userRepository;
 
    @GetMapping
-    public ResponseEntity<?> getFavorites(Principal principal) {
+    public ResponseEntity<?> getFavorites(
+            Principal principal
+   ) {
         try {
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             List<Book> favoris = favoriteService.getFavorites(user.getId());
@@ -36,7 +38,10 @@ public class FavoriteController {
     }
 
     @PostMapping("/{bookId}")
-    public ResponseEntity<?> addFavorite(@PathVariable("bookId") String bookIdInPath, Principal principal) {
+    public ResponseEntity<?> addFavorite(
+            @PathVariable("bookId") String bookIdInPath,
+            Principal principal
+    ) {
         try {
             int bookId = Integer.parseInt(bookIdInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
@@ -50,7 +55,10 @@ public class FavoriteController {
     }
 
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<?> removeFavorite(@PathVariable("bookId") String bookIdInPath, Principal principal) {
+    public ResponseEntity<?> removeFavorite(
+            @PathVariable("bookId") String bookIdInPath,
+            Principal principal
+    ) {
         try {
             int bookId = Integer.parseInt(bookIdInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
@@ -64,7 +72,10 @@ public class FavoriteController {
     }
 
     @GetMapping("/check/{bookId}")
-    public ResponseEntity<?> isFavorite(@PathVariable("bookId") String bookIdInPath, Principal principal) {
+    public ResponseEntity<?> isFavorite(
+            @PathVariable("bookId") String bookIdInPath,
+            Principal principal
+    ) {
         try {
             int bookId = Integer.parseInt(bookIdInPath);
             User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));

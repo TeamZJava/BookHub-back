@@ -1,0 +1,119 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Loan</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.eni.bookhub.bo</a>
+</div>
+
+<h1>Coverage Summary for Class: Loan (fr.eni.bookhub.bo)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">Loan$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">Loan$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.eni.bookhub.bo;
+&nbsp;
+&nbsp;import fr.eni.bookhub.bo.enums.LoanStatus;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.*;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;
+&nbsp;@Data
+&nbsp;@AllArgsConstructor
+&nbsp;@NoArgsConstructor
+&nbsp;@Builder
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;loans&quot;)
+&nbsp;public class Loan {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Column(name = &quot;id_loan&quot;)
+&nbsp;    private int id;
+&nbsp;
+&nbsp;    // FK → users
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+&nbsp;    @JoinColumn(name = &quot;id_user&quot;, nullable = false)
+&nbsp;    private User user;
+&nbsp;
+&nbsp;    // FK → books
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+&nbsp;    @JoinColumn(name = &quot;id_book&quot;, nullable = false)
+&nbsp;    private Book book;
+&nbsp;
+&nbsp;    @Column(name = &quot;loan_date&quot;, nullable = false)
+&nbsp;    private LocalDateTime loanDate;
+&nbsp;
+&nbsp;    @Column(name = &quot;due_date&quot;, nullable = false)
+&nbsp;    private LocalDateTime dueDate;
+&nbsp;
+&nbsp;    // Null tant livre pas retourné
+&nbsp;    @Column(name = &quot;return_date&quot;)
+&nbsp;    private LocalDateTime returnDate;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    @Column(nullable = false, length = 10)
+&nbsp;    private LoanStatus status;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-23 14:12</div>
+</div>
+</body>
+</html>
