@@ -158,7 +158,7 @@ public class LoanServiceImpl implements LoanService {
     public boolean isLate(int userId) {
         List<Loan> emprunts = loanRepository.findByUserId(userId);
         for (Loan emprunt : emprunts) {
-            if (emprunt.getStatus() == LoanStatus.ACTIVE && emprunt.getDueDate().isBefore(LocalDateTime.now())) {
+            if ((emprunt.getStatus() == LoanStatus.ACTIVE || emprunt.getStatus() == LoanStatus.OVERDUE) && emprunt.getDueDate().isBefore(LocalDateTime.now())) {
                 return true;
             }
         }
