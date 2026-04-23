@@ -488,7 +488,22 @@ BEGIN TRY
         -- 50 Littérature classique
         ('Madame Bovary', 'Gustave Flaubert', '978-2-1234-0050-0',
          'Emma Bovary, ennuyée par sa vie de provinciale, se réfugie dans des amours adultères et des dettes.',
-         'Littérature classique', 'https://picsum.photos/seed/book50/200/300', 5, 5, DATEADD(day,-145,GETDATE()), 4.60);
+         'Littérature classique', 'https://picsum.photos/seed/book50/200/300', 5, 5, DATEADD(day,-145,GETDATE()), 4.60),
+
+        -- 51 Policier (INDISPONIBLE — 1 exemplaire, 1 emprunt ACTIVE → available=0)
+        ('L''Ombre du Verdict', 'Franck Saunier', '978-2-1234-0051-1',
+         'Un juge reçoit des menaces de mort signées d''un condamné exécuté dix ans plus tôt.',
+         'Policier', 'https://picsum.photos/seed/book51/200/300', 1, 0, DATEADD(day,-20,GETDATE()), 4.30),
+
+        -- 52 Fantasy (INDISPONIBLE — 2 exemplaires, 2 emprunts ACTIVE → available=0)
+        ('Les Portes de Cendres', 'Élodie Vargas', '978-2-1234-0052-2',
+         'Deux sœurs héritent d''un grimoire qui ouvre des portails vers des mondes en ruine.',
+         'Fantasy', 'https://picsum.photos/seed/book52/200/300', 2, 0, DATEADD(day,-35,GETDATE()), 4.60),
+
+        -- 53 Thriller (INDISPONIBLE — 1 exemplaire, 1 emprunt OVERDUE → available=0)
+        ('Fréquence Fantôme', 'Antoine Blum', '978-2-1234-0053-3',
+         'Une animatrice radio reçoit en direct la confession d''un meurtre que la police dit impossible.',
+         'Thriller', 'https://picsum.photos/seed/book53/200/300', 1, 0, DATEADD(day,-40,GETDATE()), 4.50);
 
 
     -- =============================================
@@ -580,7 +595,26 @@ BEGIN TRY
         -- Sophie (admin) : emprunt RETURNED (historique)
         ((SELECT id_user FROM dbo.users WHERE email='admin@bookhub.fr'),
          (SELECT id_book FROM dbo.books WHERE isbn='978-2-1234-0002-2'),
-         DATEADD(day,-45,GETDATE()), DATEADD(day,-31,GETDATE()), DATEADD(day,-33,GETDATE()), 'RETURNED');
+         DATEADD(day,-45,GETDATE()), DATEADD(day,-31,GETDATE()), DATEADD(day,-33,GETDATE()), 'RETURNED'),
+
+        -- Livre 51 — L'Ombre du Verdict : 1 emprunt ACTIVE (Emma) → available=0
+        ((SELECT id_user FROM dbo.users WHERE email='emma@bookhub.fr'),
+         (SELECT id_book FROM dbo.books WHERE isbn='978-2-1234-0051-1'),
+         DATEADD(day,-6,GETDATE()), DATEADD(day,8,GETDATE()), NULL, 'ACTIVE'),
+
+        -- Livre 52 — Les Portes de Cendres : 2 emprunts ACTIVE (Thomas + Chloé) → available=0
+        ((SELECT id_user FROM dbo.users WHERE email='thomas@bookhub.fr'),
+         (SELECT id_book FROM dbo.books WHERE isbn='978-2-1234-0052-2'),
+         DATEADD(day,-9,GETDATE()), DATEADD(day,5,GETDATE()), NULL, 'ACTIVE'),
+
+        ((SELECT id_user FROM dbo.users WHERE email='chloe@bookhub.fr'),
+         (SELECT id_book FROM dbo.books WHERE isbn='978-2-1234-0052-2'),
+         DATEADD(day,-4,GETDATE()), DATEADD(day,10,GETDATE()), NULL, 'ACTIVE'),
+
+        -- Livre 53 — Fréquence Fantôme : 1 emprunt OVERDUE (Lucas) → available=0
+        ((SELECT id_user FROM dbo.users WHERE email='lucas@bookhub.fr'),
+         (SELECT id_book FROM dbo.books WHERE isbn='978-2-1234-0053-3'),
+         DATEADD(day,-28,GETDATE()), DATEADD(day,-14,GETDATE()), NULL, 'OVERDUE');
 
 
     -- =============================================
