@@ -11,5 +11,5 @@ public interface ReservationService {
 
     void reserve(int userId, int bookId);
 
-    void cancel(int reservationId);
+    void cancel(int reservationId, String callerEmail);
 }
