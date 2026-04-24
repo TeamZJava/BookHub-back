@@ -45,11 +45,10 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> cancelReservation(
-            @PathVariable("id") int reservationId
+            @PathVariable("id") int reservationId,
+            Principal principal
     ) {
-        reservationService.cancel(reservationId);
-
-        // 204 No content si ok
+        reservationService.cancel(reservationId, principal.getName());
         return ResponseEntity.noContent().build();
     }
 }
