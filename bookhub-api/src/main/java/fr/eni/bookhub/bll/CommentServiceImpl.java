@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -41,6 +42,24 @@ public class CommentServiceImpl implements CommentService {
         } catch (Exception e) {
             throw new RuntimeException("Impossible d'ajouter le commentaire");
         }
+    }
+
+    @Override
+    public void signalerCommentaire(int commentId) {
+        Comment commentaire = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Commentaire introuvable"));
+        commentaire.setReported(true);
+        commentRepository.save(commentaire);
+    }
+
+    @Override
+    public List<Comment> getCommentairesSignales() {
+        return commentRepository.findByReportedTrue();
+    }
+
+    @Override
+    public void supprimerCommentaire(int commentId) {
+        commentRepository.deleteById(commentId);
     }
 
     private User validerUtilisateur(int userId) {
