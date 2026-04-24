@@ -148,10 +148,10 @@ public class BookServiceImpl implements BookService {
         if (book.getIsbn() == null || book.getIsbn().isBlank()) {
             throw new RuntimeException("L'ISBN est obligatoire");
         }
-        if (book.getTotalCopies() == null || book.getTotalCopies() <= 0) {
+         if (book.getTotalCopies() <= 0) {
             throw new RuntimeException("Le nombre d'exemplaires doit être positif");
         }
-        if (book.getAvailableCopies() == null || book.getAvailableCopies() < 0) {
+        if (book.getAvailableCopies() < 0) {
             throw new RuntimeException("Le nombre d'exemplaires disponibles ne peut pas être négatif");
         }
     }
