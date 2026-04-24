@@ -24,6 +24,7 @@ public class BookServiceImpl implements BookService {
     private RatingRepository ratingRepository;
     private FavoriteRepository favoriteRepository;
     private LoanRepository loanRepository;
+    private ReservationRepository reservationRepository;
 
     @Override
     public Page<Book> search(String search, String category, Boolean available, Pageable pageable) {
@@ -115,6 +116,11 @@ public class BookServiceImpl implements BookService {
             throw new RuntimeException("Impossible de supprimer un livre avec des emprunts en cours");
         }
         try {
+            ratingRepository.deleteAll(ratingRepository.findByBookId(id));
+            commentRepository.deleteAll(commentRepository.findByBookId(id));
+            favoriteRepository.deleteAll(favoriteRepository.findByBookId(id));
+            reservationRepository.deleteAll(reservationRepository.findByBookId(id));
+            loanRepository.deleteAll(loanRepository.findByBookId(id));
             bookRepository.deleteById(id);
         } catch (Exception e) {
             throw new RuntimeException("Impossible de supprimer le livre (id = " + id + ")");
@@ -148,7 +154,7 @@ public class BookServiceImpl implements BookService {
         if (book.getIsbn() == null || book.getIsbn().isBlank()) {
             throw new RuntimeException("L'ISBN est obligatoire");
         }
-         if (book.getTotalCopies() <= 0) {
+        if (book.getTotalCopies() <= 0) {
             throw new RuntimeException("Le nombre d'exemplaires doit être positif");
         }
         if (book.getAvailableCopies() < 0) {
