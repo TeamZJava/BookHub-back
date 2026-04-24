@@ -2,7 +2,8 @@ package fr.eni.bookhub.bll;
 
 import fr.eni.bookhub.bo.enums.Role;
 import fr.eni.bookhub.bo.User;
-import fr.eni.bookhub.dal.UserRepository;
+import fr.eni.bookhub.dal.*;
+
 import fr.eni.bookhub.dto.authentification.*;
 import fr.eni.bookhub.errors.BadRequestException;
 import fr.eni.bookhub.errors.ConflictException;
@@ -20,6 +21,11 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
+    LoanRepository loanRepository;
+    ReservationRepository reservationRepository;
+    CommentRepository commentRepository;
+    RatingRepository ratingRepository;
+    FavoriteRepository favoriteRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final JwtService jwtService;
@@ -110,16 +116,21 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Transactional
     @Override
     public void delete(int id) {
         if(id < 1) {
             throw new BadRequestException("L'id doit être supérieur à zéro");
         }
-
         if (!userRepository.existsById(id)) {
             throw new BadRequestException("Utilisateur introuvable avec l'id : " + id);
         }
-
+        // Supprime les données liées avant le user (contraintes FK)
+        loanRepository.deleteAll(loanRepository.findByUserId(id));
+        reservationRepository.deleteAll(reservationRepository.findByUserId(id));
+        commentRepository.deleteAll(commentRepository.findByUserId(id));
+        ratingRepository.deleteAll(ratingRepository.findByUserId(id));
+        favoriteRepository.deleteAll(favoriteRepository.findByUserId(id));
         userRepository.deleteById(id);
     }
 
