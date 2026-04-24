@@ -78,8 +78,7 @@ public class BookController {
             @RequestBody Book book
     ) {
         try {
-            bookService.create(book);
-            return ResponseEntity.ok(book);
+            return ResponseEntity.ok(bookService.create(book));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
         }
@@ -131,6 +130,27 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre identifiant n'est pas un entier");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/comments/signales")
+    public ResponseEntity<?> getCommentairesSignales() {
+        return ResponseEntity.ok(commentService.getCommentairesSignales());
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> supprimerCommentaire(@PathVariable("commentId") int commentId) {
+        commentService.supprimerCommentaire(commentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/comments/{commentId}/signaler")
+    public ResponseEntity<?> signalerCommentaire(@PathVariable("commentId") int commentId) {
+        try {
+            commentService.signalerCommentaire(commentId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
