@@ -70,6 +70,7 @@ public class BookHubSecurityConfig {
 
                     // Livres : création et modification et suppression réservées aux LIBRARIAN et ADMIN
                     .requestMatchers(HttpMethod.POST, "/api/books").hasAnyRole("LIBRARIAN", "ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/books/*/comments/*/signaler").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
 
