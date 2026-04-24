@@ -75,7 +75,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public void cancel(int reservationId) {
+    public void cancel(int reservationId, String callerEmail) {
         if (reservationId <= 0) {
             throw new BadRequestException("ID invalide");
         }
@@ -83,6 +83,11 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
                 () -> new NotFoundException("Reservation introuvable")
         );
+
+        // Vérifie que la réservation appartient à l'appelant
+        if (!reservation.getUser().getEmail().equals(callerEmail)) {
+            throw new BadRequestException("Vous ne pouvez annuler que vos propres réservations");
+        }
 
         // Passage en CANCELED, pas de suppression de la resa
         reservation.setStatus(ReservationStatus.CANCELED);
