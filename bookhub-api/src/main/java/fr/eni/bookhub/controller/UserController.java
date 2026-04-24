@@ -51,13 +51,9 @@ public class UserController {
         return ResponseEntity.ok(userService.update(user.getId(), request));
     }
 
-    // Delete — DELETE /api/users/{id}
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable int id
-    ) {
+    public ResponseEntity<Void> delete(@PathVariable int id) {
         userService.delete(id);
-        // 204 No Content
         return ResponseEntity.noContent().build();
     }
 
